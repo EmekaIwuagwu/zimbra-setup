@@ -200,24 +200,45 @@ install_dependencies() {
     # Update package lists
     apt-get update -qq
     
+    # Detect Ubuntu version for package compatibility
+    source /etc/os-release
+    VERSION_NUM=$(echo "$VERSION_ID" | cut -d. -f1)
+    
+    # Set package names based on Ubuntu version
+    if [[ "$VERSION_NUM" -ge 24 ]]; then
+        # Ubuntu 24.04+ uses different package names
+        IDN_PKG="libidn12"
+        AIO_PKG="libaio1t64"
+        NCURSES_PKG="libncurses6"
+        NETCAT_PKG="netcat-openbsd"
+        log "Using Ubuntu 24.04+ package names"
+    else
+        # Ubuntu 20.04/22.04 package names
+        IDN_PKG="libidn11"
+        AIO_PKG="libaio1"
+        NCURSES_PKG="libncurses5"
+        NETCAT_PKG="netcat"
+        log "Using Ubuntu 20.04/22.04 package names"
+    fi
+    
     # Install prerequisites
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libgmp10 \
         libpopt0 \
         sqlite3 \
-        libidn11 \
+        ${IDN_PKG} \
         libpcre3 \
         libexpat1 \
         libgcc-s1 \
         libstdc++6 \
         wget \
         curl \
-        netcat \
+        ${NETCAT_PKG} \
         sudo \
-        libaio1 \
-        libncurses5 \
+        ${AIO_PKG} \
+        ${NCURSES_PKG} \
         perl \
-        perl-modules \
+        perl-modules-5.* \
         dnsutils \
         sysstat \
         unzip \
