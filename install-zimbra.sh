@@ -19,8 +19,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration Variables
-ZIMBRA_VERSION="10.0.9"
-ZIMBRA_DOWNLOAD_URL="https://files.zimbra.com/downloads/${ZIMBRA_VERSION}_GA/zcs-${ZIMBRA_VERSION}_GA_4955.UBUNTU20_64.20240228075928.tgz"
+ZIMBRA_VERSION="10.0.8"
+ZIMBRA_DOWNLOAD_URL="https://files.zimbra.com/downloads/${ZIMBRA_VERSION}_GA/zcs-${ZIMBRA_VERSION}_GA_0324.UBUNTU20_64.20240702113708.tgz"
 INSTALL_DIR="/tmp/zimbra-install"
 LOG_FILE="/var/log/zimbra-install.log"
 ZIMBRA_HOSTNAME=""
