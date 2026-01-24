@@ -1,0 +1,121 @@
+# Zimbra Unattended Installation Configuration
+# Copy this file to zimbra-config.conf and customize for your environment
+# Usage: sudo ZIMBRA_CONFIG=./zimbra-config.conf ./install-zimbra.sh
+
+# Basic Configuration
+ZIMBRA_HOSTNAME="mail.example.com"
+ZIMBRA_DOMAIN="example.com"
+ADMIN_PASSWORD="ChangeThisPassword123!"
+
+# Zimbra Version (adjust based on latest available)
+ZIMBRA_VERSION="10.0.9"
+ZIMBRA_DOWNLOAD_URL="https://files.zimbra.com/downloads/${ZIMBRA_VERSION}_GA/zcs-${ZIMBRA_VERSION}_GA_4955.UBUNTU20_64.20240228075928.tgz"
+
+# Installation Directory
+INSTALL_DIR="/tmp/zimbra-install"
+
+# Network Configuration
+# Leave SERVER_IP empty to auto-detect
+SERVER_IP=""
+
+# Timezone
+ZIMBRA_TIMEZONE="America/New_York"
+
+# Memory Configuration (MB)
+# Set to 30% of total RAM for MySQL
+MYSQL_MEMORY_PERCENT="30"
+# Mailbox daemon memory (MB)
+MAILBOXD_MEMORY="512"
+
+# SSL Configuration
+# Set to "TRUE" to use self-signed certificate (for testing)
+# Set to "FALSE" if you'll install commercial certificate later
+USE_SELF_SIGNED_CERT="TRUE"
+
+# Service Configuration
+RUN_ANTIVIRUS="yes"
+RUN_SPAM_ASSASSIN="yes"
+RUN_DKIM="yes"
+RUN_CBPOLICYD="no"
+
+# Proxy Configuration
+ENABLE_MAIL_PROXY="TRUE"
+ENABLE_WEB_PROXY="TRUE"
+
+# Port Configuration
+HTTP_PORT="8080"
+HTTPS_PORT="8443"
+HTTP_PROXY_PORT="80"
+HTTPS_PROXY_PORT="443"
+IMAP_PORT="7143"
+IMAP_PROXY_PORT="143"
+IMAPS_PORT="7993"
+IMAPS_PROXY_PORT="993"
+POP_PORT="7110"
+POP_PROXY_PORT="110"
+POPS_PORT="7995"
+POPS_PROXY_PORT="995"
+
+# SMTP Configuration
+SMTP_HOST="$ZIMBRA_HOSTNAME"
+SMTP_NOTIFY="yes"
+SMTP_SOURCE="admin@$ZIMBRA_DOMAIN"
+SMTP_DEST="admin@$ZIMBRA_DOMAIN"
+
+# Logging
+LOG_FILE="/var/log/zimbra-install.log"
+
+# Firewall
+CONFIGURE_FIREWALL="yes"
+
+# Packages to Install
+# Core packages (always installed)
+INSTALL_PACKAGES="zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy"
+
+# Optional: Add archiving
+# INSTALL_PACKAGES="$INSTALL_PACKAGES zimbra-archiving"
+
+# Backup Configuration
+ENABLE_BACKUP="yes"
+BACKUP_DIR="/opt/zimbra/backup"
+
+# Update Configuration
+VERSION_UPDATE_CHECKS="TRUE"
+VERSION_CHECK_INTERVAL="1d"
+VERSION_CHECK_NOTIFICATIONS="TRUE"
+VERSION_CHECK_EMAIL="admin@$ZIMBRA_DOMAIN"
+
+# Advanced Configuration
+
+# LDAP Configuration
+LDAP_PORT="389"
+LDAP_REPLICATION_TYPE="master"
+
+# SNMP Configuration
+SNMP_NOTIFY="yes"
+SNMP_TRAP_HOST="$ZIMBRA_HOSTNAME"
+
+# Spell Check
+USE_SPELL_CHECK="yes"
+SPELL_URL="http://$ZIMBRA_HOSTNAME:7780/aspell.php"
+
+# Features
+ENABLE_BRIEFCASES="Enabled"
+ENABLE_TASKS="Enabled"
+
+# Network Mode (ipv4, ipv6, both)
+IP_MODE="ipv4"
+
+# Security
+REQUIRE_INTERPROCESS_SECURITY="1"
+ZIMBRA_REQ_SECURITY="yes"
+
+# SSL Digest
+SSL_DEFAULT_DIGEST="sha256"
+
+# Cleanup after installation
+REMOVE_INSTALL_FILES="yes"
+
+# Auto-accept configuration (for fully automated install)
+# Set to "yes" only if you're confident in your configuration
+AUTO_ACCEPT_CONFIG="no"
