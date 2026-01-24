@@ -145,7 +145,7 @@ check_hostname() {
     if [[ -z "$FQDN" || "$FQDN" == "$HOSTNAME" ]]; then
         print_fail "FQDN not properly configured (current: $HOSTNAME)"
         echo -e "       ${YELLOW}Set FQDN with: hostnamectl set-hostname mail.example.com${NC}"
-    elif [[ "$FQDN" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$ ]]; then
+    elif [[ "$FQDN" =~ ^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$ ]]; then
         print_pass "FQDN configured: $FQDN"
     else
         print_warn "FQDN format may be invalid: $FQDN"
