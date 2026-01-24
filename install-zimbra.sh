@@ -205,20 +205,28 @@ install_dependencies() {
     VERSION_NUM=$(echo "$VERSION_ID" | cut -d. -f1)
     
     # Set package names based on Ubuntu version
-    if [[ "$VERSION_NUM" -ge 24 ]]; then
-        # Ubuntu 24.04+ uses different package names
+    # Even Ubuntu 22.04.5 uses newer packages like libidn12
+    if [[ "$VERSION_NUM" -ge 22 ]]; then
+        # Ubuntu 22.04+ and 24.04+ use newer package names
         IDN_PKG="libidn12"
-        AIO_PKG="libaio1t64"
         NCURSES_PKG="libncurses6"
         NETCAT_PKG="netcat-openbsd"
-        log "Using Ubuntu 24.04+ package names"
+        
+        # libaio package name differs between 22 and 24
+        if [[ "$VERSION_NUM" -ge 24 ]]; then
+            AIO_PKG="libaio1t64"
+            log "Using Ubuntu 24.04+ package names"
+        else
+            AIO_PKG="libaio1"
+            log "Using Ubuntu 22.04+ package names"
+        fi
     else
-        # Ubuntu 20.04/22.04 package names
+        # Ubuntu 20.04 package names
         IDN_PKG="libidn11"
         AIO_PKG="libaio1"
         NCURSES_PKG="libncurses5"
         NETCAT_PKG="netcat"
-        log "Using Ubuntu 20.04/22.04 package names"
+        log "Using Ubuntu 20.04 package names"
     fi
     
     # Install prerequisites
