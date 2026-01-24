@@ -139,12 +139,15 @@ check_cpu() {
 check_hostname() {
     print_check "Checking hostname configuration..."
     
-    HOSTNAME=$(hostname)
+    SHORT_HOSTNAME=$(hostname -s 2>/dev/null)
     FQDN=$(hostname -f 2>/dev/null)
     
-    if [[ -z "$FQDN" || "$FQDN" == "$HOSTNAME" ]]; then
-        print_fail "FQDN not properly configured (current: $HOSTNAME)"
+    if [[ -z "$FQDN" ]]; then
+        print_fail "FQDN not properly configured (current: $SHORT_HOSTNAME)"
         echo -e "       ${YELLOW}Set FQDN with: hostnamectl set-hostname mail.example.com${NC}"
+    elif [[ "$FQDN" == "$SHORT_HOSTNAME" ]] || [[ ! "$FQDN" =~ \. ]]; then
+        print_fail "FQDN is same as short hostname (current: $FQDN)"
+        echo -e "       ${YELLOW}Set FQDN with: hostnamectl set-hostname mail.spiffbox.xyz${NC}"
     elif [[ "$FQDN" =~ ^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$ ]]; then
         print_pass "FQDN configured: $FQDN"
     else
