@@ -1,6 +1,6 @@
-# 🚀 Getting Started with Zimbra Setup for spiffbox.xyz
+# 🚀 Getting Started with Zimbra Setup for oregonstate.de
 
-Welcome! This guide will help you get your Zimbra mail server up and running for **spiffbox.xyz** in the fastest way possible.
+Welcome! This guide will help you get your Zimbra mail server up and running for **oregonstate.de** in the fastest way possible.
 
 ---
 
@@ -25,7 +25,7 @@ You have **14 files** to help you install and manage Zimbra:
 12. **OVERVIEW.md** - Suite overview
 
 ### ⚙️ Configuration
-13. **zimbra-config.conf** - Your spiffbox.xyz configuration
+13. **zimbra-config.conf** - Your oregonstate.de configuration
 14. **zimbra-config.conf.example** - Template file
 
 ---
@@ -34,20 +34,20 @@ You have **14 files** to help you install and manage Zimbra:
 
 ### Step 1: Configure DNS at Spaceship.com (FIRST!)
 
-Login to Spaceship.com → Domains → spiffbox.xyz → DNS Settings
+Login to Spaceship.com → Domains → oregonstate.de → DNS Settings
 
 Add these DNS records:
 
 ```
-A      mail        194.163.142.4
-MX     @           mail.spiffbox.xyz    (priority: 10)
-TXT    @           v=spf1 mx ip4:194.163.142.4 ~all
-TXT    _dmarc      v=DMARC1; p=quarantine; rua=mailto:dmarc@spiffbox.xyz
+A      mail        173.249.1.171
+MX     @           mail.oregonstate.de    (priority: 10)
+TXT    @           v=spf1 mx ip4:173.249.1.171 ~all
+TXT    _dmarc      v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de
 ```
 
 **CRITICAL**: Contact your server hosting provider to add:
 ```
-PTR: 194.163.142.4 → mail.spiffbox.xyz
+PTR: 173.249.1.171 → mail.oregonstate.de
 ```
 
 ⏰ **Wait 1-4 hours** for DNS propagation before continuing.
@@ -57,7 +57,7 @@ PTR: 194.163.142.4 → mail.spiffbox.xyz
 ### Step 2: SSH to Your Server
 
 ```bash
-ssh root@194.163.142.4
+ssh root@173.249.1.171
 ```
 
 ---
@@ -89,8 +89,8 @@ sudo ./install-zimbra.sh
 ```
 
 When prompted during installation:
-- Hostname: **mail.spiffbox.xyz**
-- Domain: **spiffbox.xyz**
+- Hostname: **mail.oregonstate.de**
+- Domain: **oregonstate.de**
 - Password: **[choose strong password]**
 
 ---
@@ -99,7 +99,7 @@ When prompted during installation:
 
 ```bash
 # Get DKIM public key
-su - zimbra -c "zmprov gd spiffbox.xyz zimbraDKIMPublicKey"
+su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
 
 # Copy the key, then add to Spaceship.com DNS:
 # TXT record at: default._domainkey
@@ -115,9 +115,9 @@ sudo ./post-install-hardening.sh
 
 Access your mail server:
 
-**Admin Console**: https://mail.spiffbox.xyz:7071  
-**Webmail**: https://mail.spiffbox.xyz  
-**Username**: admin@spiffbox.xyz  
+**Admin Console**: https://mail.oregonstate.de:7071  
+**Webmail**: https://mail.oregonstate.de  
+**Username**: admin@oregonstate.de  
 **Password**: [what you set in Step 4]
 
 ---
@@ -209,7 +209,7 @@ tail -50 /opt/zimbra/log/mailbox.log  # Check logs
                │ Wait 1-4 hours
                ↓
 ┌─────────────────────────────────────┐
-│ 2. SSH to server (194.163.142.4)   │
+│ 2. SSH to server (173.249.1.171)   │
 │    Clone repository                 │
 │    chmod +x *.sh                    │
 └──────────────┬──────────────────────┘
@@ -250,7 +250,7 @@ tail -50 /opt/zimbra/log/mailbox.log  # Check logs
 └──────────────┬──────────────────────┘
                ↓
          ✅ DONE! ✅
-   Access: https://mail.spiffbox.xyz
+   Access: https://mail.oregonstate.de
 ```
 
 ---
@@ -302,7 +302,7 @@ tail -50 /opt/zimbra/log/mailbox.log  # Check logs
 ✅ **Security First** - Enterprise-grade hardening included  
 ✅ **Well Documented** - 14 files of comprehensive guides  
 ✅ **Production Ready** - Battle-tested scripts  
-✅ **Your Domain** - Pre-configured for spiffbox.xyz  
+✅ **Your Domain** - Pre-configured for oregonstate.de  
 ✅ **Easy Maintenance** - Built-in backup and monitoring  
 
 ---
@@ -311,8 +311,8 @@ tail -50 /opt/zimbra/log/mailbox.log  # Check logs
 
 After completing installation, verify:
 
-- [ ] Can login to admin console (https://mail.spiffbox.xyz:7071)
-- [ ] Can login to webmail (https://mail.spiffbox.xyz)
+- [ ] Can login to admin console (https://mail.oregonstate.de:7071)
+- [ ] Can login to webmail (https://mail.oregonstate.de)
 - [ ] Can send email to external address (Gmail/Outlook)
 - [ ] External email arrives in Zimbra
 - [ ] DNS records verified (run `./verify-dns.sh`)
@@ -332,7 +332,7 @@ After completing installation, verify:
 
 ### Or Quick Install:
 1. Configure DNS at Spaceship.com
-2. SSH to server: `ssh root@194.163.142.4`
+2. SSH to server: `ssh root@173.249.1.171`
 3. Run:
 ```bash
 git clone https://github.com/EmekaIwuagwu/zimbra-setup.git
@@ -359,6 +359,6 @@ Check these files in order:
 
 **Good luck with your installation!** 🎉
 
-Your Zimbra mail server for **spiffbox.xyz** will be running in about 2-3 hours (including DNS propagation time).
+Your Zimbra mail server for **oregonstate.de** will be running in about 2-3 hours (including DNS propagation time).
 
 Remember: **DNS configuration first, installation second!**

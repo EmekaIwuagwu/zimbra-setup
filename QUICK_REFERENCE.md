@@ -1,13 +1,13 @@
-# Quick Reference Card - spiffbox.xyz Zimbra Setup
+# Quick Reference Card - oregonstate.de Zimbra Setup
 
 ## 📋 Your Server Details
 
 ```
-Domain:           spiffbox.xyz
-Mail Server:      mail.spiffbox.xyz
-IP Address:       194.163.142.4
+Domain:           oregonstate.de
+Mail Server:      mail.oregonstate.de
+IP Address:       173.249.1.171
 Registrar:        Spaceship.com
-Admin Email:      admin@spiffbox.xyz
+Admin Email:      admin@oregonstate.de
 ```
 
 ---
@@ -19,18 +19,18 @@ Login to Spaceship.com → DNS Settings → Add these records:
 
 | Type | Host | Value | Priority |
 |------|------|-------|----------|
-| A | mail | 194.163.142.4 | - |
-| MX | @ | mail.spiffbox.xyz | 10 |
-| TXT | @ | v=spf1 mx ip4:194.163.142.4 ~all | - |
-| TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@spiffbox.xyz | - |
+| A | mail | 173.249.1.171 | - |
+| MX | @ | mail.oregonstate.de | 10 |
+| TXT | @ | v=spf1 mx ip4:173.249.1.171 ~all | - |
+| TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de | - |
 
-**CRITICAL**: Contact your server host to set PTR record: `194.163.142.4 → mail.spiffbox.xyz`
+**CRITICAL**: Contact your server host to set PTR record: `173.249.1.171 → mail.oregonstate.de`
 
 ### 2. Server Commands (Run in Order)
 
 ```bash
 # SSH to server
-ssh root@194.163.142.4
+ssh root@173.249.1.171
 
 # Clone repository
 git clone https://github.com/EmekaIwuagwu/zimbra-setup.git
@@ -48,12 +48,12 @@ sudo ./pre-install-check.sh
 
 # Install Zimbra (15-30 min)
 sudo ./install-zimbra.sh
-# Enter: mail.spiffbox.xyz
-# Enter: spiffbox.xyz
+# Enter: mail.oregonstate.de
+# Enter: oregonstate.de
 # Enter: strong password
 
 # Get DKIM key and add to DNS
-su - zimbra -c "zmprov gd spiffbox.xyz zimbraDKIMPublicKey"
+su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
 # Copy key, add TXT record at default._domainkey
 
 # Security hardening
@@ -62,8 +62,8 @@ sudo ./post-install-hardening.sh
 # SSL certificate
 sudo apt-get install -y certbot
 su - zimbra -c "zmproxyctl stop"
-sudo certbot certonly --standalone -d mail.spiffbox.xyz
-su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.spiffbox.xyz/cert.pem /etc/letsencrypt/live/mail.spiffbox.xyz/chain.pem"
+sudo certbot certonly --standalone -d mail.oregonstate.de
+su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem"
 su - zimbra -c "zmcontrol restart"
 ```
 
@@ -71,9 +71,9 @@ su - zimbra -c "zmcontrol restart"
 
 ## 🔗 Access URLs
 
-**Admin Console**: https://mail.spiffbox.xyz:7071  
-**Webmail**: https://mail.spiffbox.xyz  
-**Username**: admin@spiffbox.xyz  
+**Admin Console**: https://mail.oregonstate.de:7071  
+**Webmail**: https://mail.oregonstate.de  
+**Username**: admin@oregonstate.de  
 **Password**: [what you set during installation]
 
 ---
@@ -95,10 +95,10 @@ su - zimbra -c "zmmailboxdctl restart"
 ### User Management
 ```bash
 # Create user
-su - zimbra -c "zmprov ca user@spiffbox.xyz 'password' displayName 'User Name'"
+su - zimbra -c "zmprov ca user@oregonstate.de 'password' displayName 'User Name'"
 
 # Reset password
-su - zimbra -c "zmprov sp user@spiffbox.xyz 'newpassword'"
+su - zimbra -c "zmprov sp user@oregonstate.de 'newpassword'"
 
 # List all users
 su - zimbra -c "zmprov -l gaa"
@@ -137,7 +137,7 @@ grep "authentication failed" /opt/zimbra/log/mailbox.log
 ls -lh /opt/zimbra/backup/
 
 # Restore account
-su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@spiffbox.xyz"
+su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@oregonstate.de"
 ```
 
 ---
@@ -147,20 +147,20 @@ su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@spiffbox.xyz"
 ### DNS Verification
 ```bash
 # A record
-nslookup mail.spiffbox.xyz
-# Should return: 194.163.142.4
+nslookup mail.oregonstate.de
+# Should return: 173.249.1.171
 
 # MX record
-nslookup -query=mx spiffbox.xyz
-# Should return: mail.spiffbox.xyz
+nslookup -query=mx oregonstate.de
+# Should return: mail.oregonstate.de
 
 # PTR record
-nslookup 194.163.142.4
-# Should return: mail.spiffbox.xyz
+nslookup 173.249.1.171
+# Should return: mail.oregonstate.de
 
 # SPF record
-dig txt spiffbox.xyz
-# Should show: v=spf1 mx ip4:194.163.142.4 ~all
+dig txt oregonstate.de
+# Should show: v=spf1 mx ip4:173.249.1.171 ~all
 
 # Run verification script
 ./verify-dns.sh
@@ -173,19 +173,19 @@ echo "Test" | mail -s "Test" check-auth@verifier.port25.com
 
 # Check MXToolbox
 # Visit: https://mxtoolbox.com/emailhealth/
-# Enter: spiffbox.xyz
+# Enter: oregonstate.de
 ```
 
 ### Service Test
 ```bash
 # SMTP test
-telnet mail.spiffbox.xyz 25
+telnet mail.oregonstate.de 25
 
 # IMAP test
-telnet mail.spiffbox.xyz 143
+telnet mail.oregonstate.de 143
 
 # HTTPS test
-curl -I https://mail.spiffbox.xyz
+curl -I https://mail.oregonstate.de
 ```
 
 ---
@@ -194,20 +194,20 @@ curl -I https://mail.spiffbox.xyz
 
 ### IMAP Settings
 ```
-Server:     mail.spiffbox.xyz
+Server:     mail.oregonstate.de
 Port:       993
 Security:   SSL/TLS
-Username:   user@spiffbox.xyz
+Username:   user@oregonstate.de
 Password:   [user password]
 ```
 
 ### SMTP Settings
 ```
-Server:     mail.spiffbox.xyz
+Server:     mail.oregonstate.de
 Port:       587
 Security:   STARTTLS
 Auth:       Required
-Username:   user@spiffbox.xyz
+Username:   user@oregonstate.de
 Password:   [user password]
 ```
 
@@ -233,7 +233,7 @@ Password:   [user password]
 ### Can't login to admin console
 ```bash
 # Reset admin password
-su - zimbra -c "zmprov sp admin@spiffbox.xyz 'NewPassword123!'"
+su - zimbra -c "zmprov sp admin@oregonstate.de 'NewPassword123!'"
 
 # Restart proxy
 su - zimbra -c "zmproxyctl restart"
@@ -280,9 +280,9 @@ du -sh /opt/zimbra/backup/*
 ## 📱 Mobile Device Setup (iOS/Android)
 
 **Account Type**: Exchange  
-**Server**: mail.spiffbox.xyz  
-**Domain**: spiffbox.xyz  
-**Username**: user@spiffbox.xyz  
+**Server**: mail.oregonstate.de  
+**Domain**: oregonstate.de  
+**Username**: user@oregonstate.de  
 **Password**: [user password]  
 **Use SSL**: Yes  
 
@@ -314,8 +314,8 @@ du -sh /opt/zimbra/backup/*
 ```
 Configuration:  /opt/zimbra/
 Logs:          /opt/zimbra/log/
-Backups:       /opt/zimbra/backup/
-SSL Certs:     /etc/letsencrypt/live/mail.spiffbox.xyz/
+Backups:          /opt/zimbra/backup/
+SSL Certs:     /etc/letsencrypt/live/mail.oregonstate.de/
 Install Logs:  /var/log/zimbra-install.log
 ```
 

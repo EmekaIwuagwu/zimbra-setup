@@ -3,8 +3,8 @@
 # Usage: sudo ZIMBRA_CONFIG=./zimbra-config.conf ./install-zimbra.sh
 
 # Basic Configuration
-ZIMBRA_HOSTNAME="mail.example.com"
-ZIMBRA_DOMAIN="example.com"
+ZIMBRA_HOSTNAME="mail.oregonstate.de"
+ZIMBRA_DOMAIN="oregonstate.de"
 ADMIN_PASSWORD="ChangeThisPassword123!"
 
 # Zimbra Version (adjust based on latest available)
@@ -19,7 +19,7 @@ INSTALL_DIR="/tmp/zimbra-install"
 SERVER_IP=""
 
 # Timezone
-ZIMBRA_TIMEZONE="America/New_York"
+ZIMBRA_TIMEZONE="Europe/Berlin"
 
 # Memory Configuration (MB)
 # Set to 30% of total RAM for MySQL

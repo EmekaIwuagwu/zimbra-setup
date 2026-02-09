@@ -1,11 +1,11 @@
-# Zimbra Setup Checklist for spiffbox.xyz
+# Zimbra Setup Checklist for oregonstate.de
 
 ## Server Information
-- **Domain**: spiffbox.xyz
-- **Mail Server**: mail.spiffbox.xyz
-- **IP Address**: 194.163.142.4
+- **Domain**: oregonstate.de
+- **Mail Server**: mail.oregonstate.de
+- **IP Address**: 173.249.1.171
 - **Registrar**: Spaceship.com
-- **Admin Email**: admin@spiffbox.xyz
+- **Admin Email**: admin@oregonstate.de
 
 ---
 
@@ -13,47 +13,47 @@
 
 ### At Spaceship.com Dashboard
 
-Login to: https://www.spaceship.com/ → Domains → spiffbox.xyz → DNS Settings
+Login to: https://www.spaceship.com/ → Domains → oregonstate.de → DNS Settings
 
 #### Add These DNS Records:
 
 - [ ] **A Record #1**
   - Type: `A`
   - Host: `mail`
-  - Value: `194.163.142.4`
+  - Value: `173.249.1.171`
   - TTL: `3600`
 
 - [ ] **A Record #2** (Optional - for webmail at root domain)
   - Type: `A`
   - Host: `@` or leave blank
-  - Value: `194.163.142.4`
+  - Value: `173.249.1.171`
   - TTL: `3600`
 
 - [ ] **MX Record**
   - Type: `MX`
   - Host: `@` or leave blank
-  - Value: `mail.spiffbox.xyz`
+  - Value: `mail.oregonstate.de`
   - Priority: `10`
   - TTL: `3600`
 
 - [ ] **SPF TXT Record**
   - Type: `TXT`
   - Host: `@` or leave blank
-  - Value: `v=spf1 mx ip4:194.163.142.4 ~all`
+  - Value: `v=spf1 mx ip4:173.249.1.171 ~all`
   - TTL: `3600`
 
 - [ ] **DMARC TXT Record**
   - Type: `TXT`
   - Host: `_dmarc`
-  - Value: `v=DMARC1; p=quarantine; rua=mailto:dmarc@spiffbox.xyz`
+  - Value: `v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de`
   - TTL: `3600`
 
 ### Contact Your Server Hosting Provider
 
 - [ ] **Request PTR (Reverse DNS) Record**
   - Tell them: "Please set up reverse DNS"
-  - IP: `194.163.142.4`
-  - Should point to: `mail.spiffbox.xyz`
+  - IP: `173.249.1.171`
+  - Should point to: `mail.oregonstate.de`
   - Critical for email deliverability!
 
 ### Verify DNS Propagation
@@ -61,16 +61,16 @@ Login to: https://www.spaceship.com/ → Domains → spiffbox.xyz → DNS Settin
 - [ ] Wait 1-4 hours after adding records
 - [ ] Test A record:
   ```bash
-  nslookup mail.spiffbox.xyz
-  # Should show: 194.163.142.4
+  nslookup mail.oregonstate.de
+  # Should show: 173.249.1.171
   ```
 - [ ] Test MX record:
   ```bash
-  nslookup -query=mx spiffbox.xyz
-  # Should show: mail.spiffbox.xyz
+  nslookup -query=mx oregonstate.de
+  # Should show: mail.oregonstate.de
   ```
-- [ ] Use online tool: https://dnschecker.org/ (enter `mail.spiffbox.xyz`)
-- [ ] All locations should show `194.163.142.4`
+- [ ] Use online tool: https://dnschecker.org/ (enter `mail.oregonstate.de`)
+- [ ] All locations should show `173.249.1.171`
 
 ---
 
@@ -80,8 +80,8 @@ Login to: https://www.spaceship.com/ → Domains → spiffbox.xyz → DNS Settin
 
 - [ ] Connect to server:
   ```bash
-  ssh root@194.163.142.4
-  # Or: ssh youruser@194.163.142.4
+  ssh root@173.249.1.171
+  # Or: ssh youruser@173.249.1.171
   ```
 
 ### Update Operating System
@@ -143,12 +143,12 @@ If you see failures, fix them:
 
 - [ ] **Hostname not set**: 
   ```bash
-  sudo hostnamectl set-hostname mail.spiffbox.xyz
+  sudo hostnamectl set-hostname mail.oregonstate.de
   ```
 - [ ] **Update /etc/hosts**:
   ```bash
   sudo nano /etc/hosts
-  # Add line: 194.163.142.4 mail.spiffbox.xyz mail
+  # Add line: 173.249.1.171 mail.oregonstate.de mail
   ```
 - [ ] **Low memory**: Add swap space
   ```bash
@@ -184,8 +184,8 @@ If you see failures, fix them:
 
 When prompted, enter:
 
-- [ ] **Hostname**: `mail.spiffbox.xyz`
-- [ ] **Domain**: `spiffbox.xyz`
+- [ ] **Hostname**: `mail.oregonstate.de`
+- [ ] **Domain**: `oregonstate.de`
 - [ ] **Admin Password**: (choose strong password - write it down!)
 - [ ] Confirm password
 - [ ] Wait 15-30 minutes for installation
@@ -204,7 +204,7 @@ When prompted, enter:
 
 - [ ] Switch to zimbra user and get DKIM key:
   ```bash
-  su - zimbra -c "zmprov gd spiffbox.xyz zimbraDKIMPublicKey"
+  su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
   ```
 - [ ] Copy the public key (long string starting with `MIGfMA0G...`)
 
@@ -223,7 +223,7 @@ When prompted, enter:
 
 - [ ] Test DKIM record:
   ```bash
-  dig txt default._domainkey.spiffbox.xyz
+  dig txt default._domainkey.oregonstate.de
   ```
 - [ ] Should show your DKIM public key
 
@@ -277,7 +277,7 @@ When prompted, enter:
 
 - [ ] Get Let's Encrypt certificate:
   ```bash
-  sudo certbot certonly --standalone -d mail.spiffbox.xyz
+  sudo certbot certonly --standalone -d mail.oregonstate.de
   ```
 - [ ] Enter email address when prompted
 - [ ] Agree to terms
@@ -287,7 +287,7 @@ When prompted, enter:
 
 - [ ] Deploy SSL certificate:
   ```bash
-  su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.spiffbox.xyz/cert.pem /etc/letsencrypt/live/mail.spiffbox.xyz/chain.pem"
+  su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem"
   ```
 
 ### Restart Zimbra
@@ -310,7 +310,7 @@ When prompted, enter:
   ```
 - [ ] Add this line:
   ```
-  0 3 * * * certbot renew --quiet && su - zimbra -c '/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.spiffbox.xyz/cert.pem /etc/letsencrypt/live/mail.spiffbox.xyz/chain.pem' && su - zimbra -c 'zmcontrol restart'
+  0 3 * * * certbot renew --quiet && su - zimbra -c '/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem' && su - zimbra -c 'zmcontrol restart'
   ```
 - [ ] Save and exit
 
@@ -320,16 +320,16 @@ When prompted, enter:
 
 ### Access Admin Console
 
-- [ ] Open browser to: `https://mail.spiffbox.xyz:7071`
+- [ ] Open browser to: `https://mail.oregonstate.de:7071`
 - [ ] Accept security warning (if using self-signed initially)
 - [ ] Login with:
-  - Username: `admin@spiffbox.xyz`
+  - Username: `admin@oregonstate.de`
   - Password: (your admin password)
 - [ ] Admin console loads successfully
 
 ### Access Webmail
 
-- [ ] Open browser to: `https://mail.spiffbox.xyz`
+- [ ] Open browser to: `https://mail.oregonstate.de`
 - [ ] Login with admin credentials
 - [ ] Webmail interface loads
 
@@ -338,7 +338,7 @@ When prompted, enter:
 - [ ] In admin console, go to: Manage → Accounts
 - [ ] Click "New"
 - [ ] Create test user:
-  - Email: `test@spiffbox.xyz`
+  - Email: `test@oregonstate.de`
   - Password: (set test password)
 - [ ] Save user
 
@@ -351,7 +351,7 @@ When prompted, enter:
 
 ### Test Email Receiving
 
-- [ ] Send email FROM external account TO `test@spiffbox.xyz`
+- [ ] Send email FROM external account TO `test@oregonstate.de`
 - [ ] Check if email arrives in Zimbra webmail
 - [ ] Verify email appears in inbox
 
@@ -359,28 +359,28 @@ When prompted, enter:
 
 - [ ] Test all DNS records with MXToolbox:
   - Go to: https://mxtoolbox.com/SuperTool.aspx
-  - Enter: `spiffbox.xyz`
+  - Enter: `oregonstate.de`
   - Check MX record ✓
   - Check SPF record ✓
   - Check DMARC record ✓
 
 - [ ] Test DKIM:
   - Go to: https://mxtoolbox.com/dkim.aspx
-  - Enter: `spiffbox.xyz`
+  - Enter: `oregonstate.de`
   - Selector: `default`
   - Should show valid DKIM ✓
 
 - [ ] Test reverse DNS:
   ```bash
-  dig -x 194.163.142.4
-  # Should return: mail.spiffbox.xyz
+  dig -x 173.249.1.171
+  # Should return: mail.oregonstate.de
   ```
 
 ### Email Health Check
 
 - [ ] Complete email health test:
   - Go to: https://mxtoolbox.com/emailhealth/
-  - Enter: `spiffbox.xyz`
+  - Enter: `oregonstate.de`
   - Review all results (should be mostly green)
 
 ### Test Email Deliverability
@@ -404,13 +404,13 @@ When prompted, enter:
 Provide users with these settings:
 
 **IMAP Settings:**
-- Server: `mail.spiffbox.xyz`
+- Server: `mail.oregonstate.de`
 - Port: `993`
 - Security: `SSL/TLS`
-- Username: `user@spiffbox.xyz`
+- Username: `user@oregonstate.de`
 
 **SMTP Settings:**
-- Server: `mail.spiffbox.xyz`
+- Server: `mail.oregonstate.de`
 - Port: `587`
 - Security: `STARTTLS`
 - Authentication: `Required`
@@ -453,7 +453,7 @@ Provide users with these settings:
 ### Document Your Setup
 
 - [ ] Record admin password in password manager
-- [ ] Document server IP: `194.163.142.4`
+- [ ] Document server IP: `173.249.1.171`
 - [ ] Note all DNS records configured
 - [ ] Save SSL certificate renewal process
 - [ ] Document backup procedures
@@ -479,16 +479,16 @@ Provide users with these settings:
 
 ### Access Points
 
-**Admin Console**: https://mail.spiffbox.xyz:7071  
-**Webmail**: https://mail.spiffbox.xyz  
-**Admin Email**: admin@spiffbox.xyz
+**Admin Console**: https://mail.oregonstate.de:7071  
+**Webmail**: https://mail.oregonstate.de  
+**Admin Email**: admin@oregonstate.de
 
 ### Important Files
 
 - Configuration: `/opt/zimbra/`
 - Logs: `/opt/zimbra/log/`
 - Backups: `/opt/zimbra/backup/`
-- SSL Certs: `/etc/letsencrypt/live/mail.spiffbox.xyz/`
+- SSL Certs: `/etc/letsencrypt/live/mail.oregonstate.de/`
 
 ### Support Resources
 
@@ -500,7 +500,7 @@ Provide users with these settings:
 
 ## 🎉 Congratulations!
 
-Your Zimbra mail server for **spiffbox.xyz** is now:
+Your Zimbra mail server for **oregonstate.de** is now:
 
 ✅ Fully installed and configured  
 ✅ DNS properly set up  

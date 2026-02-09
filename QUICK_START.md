@@ -32,8 +32,8 @@ sudo ./install-zimbra.sh
 ```
 
 The installer will prompt you for:
-- Hostname (e.g., mail.example.com)
-- Domain (e.g., example.com)
+- Hostname (e.g., mail.oregonstate.de)
+- Domain (e.g., oregonstate.de)
 - Admin password
 
 Installation takes approximately 15-30 minutes.
@@ -60,15 +60,15 @@ This applies security best practices including:
 
 **Admin Console:**
 ```
-URL: https://your-hostname:7071
-Username: admin@your-domain
+URL: https://mail.oregonstate.de:7071
+Username: admin@oregonstate.de
 Password: [the password you set]
 ```
 
 **Webmail:**
 ```
-URL: https://your-hostname
-Username: admin@your-domain
+URL: https://mail.oregonstate.de
+Username: admin@oregonstate.de
 Password: [the password you set]
 ```
 
@@ -76,31 +76,34 @@ Password: [the password you set]
 
 ```bash
 # 1. Download or clone the scripts
-git clone <your-repo-url>
-cd zimbra
+git clone https://github.com/EmekaIwuagwu/zimbra-setup.git
+cd zimbra-setup
 
 # 2. Make all scripts executable
 chmod +x *.sh
 
-# 3. Run pre-installation check
+# 3. Run server setup (Sets hostname and /etc/hosts)
+sudo ./setup-server.sh
+
+# 4. Run pre-installation check
 sudo ./pre-install-check.sh
 
-# 4. Fix any issues identified in step 3
+# 5. Fix any issues identified in step 4
 
-# 5. Run installation
+# 6. Run installation
 sudo ./install-zimbra.sh
 
-# 6. Wait for installation to complete (15-30 minutes)
+# 7. Wait for installation to complete (15-30 minutes)
 
-# 7. Apply security hardening
+# 8. Apply security hardening
 sudo ./post-install-hardening.sh
 
-# 8. Access admin console and configure
-# https://your-hostname:7071
+# 9. Access admin console and configure
+# https://mail.oregonstate.de:7071
 
-# 9. Configure DNS records (see DNS Configuration below)
+# 10. Configure DNS records (see DNS Configuration below)
 
-# 10. Install SSL certificate (see SSL Configuration below)
+# 11. Install SSL certificate (see SSL Configuration below)
 ```
 
 ## 🔧 Common Configuration Tasks
@@ -111,29 +114,29 @@ Add these DNS records at your domain registrar:
 
 ```dns
 # A Record
-mail.example.com.       IN  A       192.168.1.100
+mail.oregonstate.de.       IN  A       173.249.1.171
 
 # MX Record
-example.com.            IN  MX  10  mail.example.com.
+oregonstate.de.            IN  MX  10  mail.oregonstate.de.
 
 # TXT Record for SPF
-example.com.            IN  TXT     "v=spf1 mx ~all"
+oregonstate.de.            IN  TXT     "v=spf1 mx ip4:173.249.1.171 ~all"
 
 # DKIM Record (get from Zimbra after installation)
-default._domainkey.example.com. IN TXT "v=DKIM1; k=rsa; p=YOUR_PUBLIC_KEY"
+default._domainkey.oregonstate.de. IN TXT "v=DKIM1; k=rsa; p=YOUR_PUBLIC_KEY"
 
 # DMARC Record
-_dmarc.example.com.     IN  TXT     "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"
+_dmarc.oregonstate.de.     IN  TXT     "v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de"
 
 # PTR Record (configure at your hosting provider)
-100.1.168.192.in-addr.arpa. IN PTR  mail.example.com.
+171.1.249.173.in-addr.arpa. IN PTR  mail.oregonstate.de.
 ```
 
 ### Get DKIM Public Key
 
 ```bash
-su - zimbra -c "zmprov gd example.com zimbraDomainDKIMSelector"
-su - zimbra -c "zmprov gd example.com zimbraDKIMPublicKey"
+su - zimbra -c "zmprov gd oregonstate.de zimbraDomainDKIMSelector"
+su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
 ```
 
 ### SSL Certificate Installation
@@ -148,23 +151,23 @@ apt-get install -y certbot
 su - zimbra -c "zmproxyctl stop"
 
 # Get certificate
-certbot certonly --standalone -d mail.example.com
+certbot certonly --standalone -d mail.oregonstate.de
 
 # Deploy certificate
-su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.example.com/cert.pem /etc/letsencrypt/live/mail.example.com/chain.pem"
+su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem"
 
 # Restart Zimbra
 su - zimbra -c "zmcontrol restart"
 
 # Auto-renewal
-echo "0 3 * * * certbot renew --quiet && su - zimbra -c 'zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.example.com/cert.pem /etc/letsencrypt/live/mail.example.com/chain.pem' && su - zimbra -c 'zmcontrol restart'" | crontab -
+echo "0 3 * * * certbot renew --quiet && su - zimbra -c 'zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem' && su - zimbra -c 'zmcontrol restart'" | crontab -
 ```
 
 #### Using Commercial Certificate
 
 ```bash
 # 1. Generate CSR
-su - zimbra -c "/opt/zimbra/bin/zmcertmgr createcsr comm -new -subject '/C=US/ST=State/L=City/O=Organization/CN=mail.example.com'"
+su - zimbra -c "/opt/zimbra/bin/zmcertmgr createcsr comm -new -subject '/C=US/ST=State/L=City/O=Organization/CN=mail.oregonstate.de'"
 
 # 2. CSR will be in: /opt/zimbra/ssl/zimbra/commercial/commercial.csr
 # Submit this to your certificate authority
@@ -201,13 +204,13 @@ su - zimbra -c "zmmailboxdctl restart"
 
 ```bash
 # Create user
-su - zimbra -c "zmprov ca user@example.com 'password' displayName 'User Name'"
+su - zimbra -c "zmprov ca user@oregonstate.de 'password' displayName 'User Name'"
 
 # Delete user
-su - zimbra -c "zmprov da user@example.com"
+su - zimbra -c "zmprov da user@oregonstate.de"
 
 # Change password
-su - zimbra -c "zmprov sp user@example.com 'newpassword'"
+su - zimbra -c "zmprov sp user@oregonstate.de 'newpassword'"
 
 # List all users
 su - zimbra -c "zmprov -l gaa"
@@ -249,7 +252,7 @@ su - zimbra -c "/opt/zimbra/bin/zmbackup -f -a all -t full"
 su - zimbra -c "/opt/zimbra/bin/zmbackup query"
 
 # Restore account
-su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@example.com -pre restore"
+su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@oregonstate.de -pre restore"
 ```
 
 ## 📊 Monitoring
@@ -293,7 +296,7 @@ su - zimbra -c "zmcontrol start -v"
 ### Can't Login to Admin Console
 ```bash
 # Reset admin password
-su - zimbra -c "zmprov sp admin@example.com 'NewPassword123!'"
+su - zimbra -c "zmprov sp admin@oregonstate.de 'NewPassword123!'"
 
 # Check proxy is running
 su - zimbra -c "zmproxyctl status"

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ################################################################################
-# Quick Server Setup Script for spiffbox.xyz
+# Quick Server Setup Script for oregonstate.de
 # Configures hostname and basic settings before Zimbra installation
 ################################################################################
 
@@ -14,12 +14,12 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-HOSTNAME="mail.spiffbox.xyz"
-DOMAIN="spiffbox.xyz"
-SERVER_IP="194.163.142.4"
+HOSTNAME="mail.oregonstate.de"
+DOMAIN="oregonstate.de"
+SERVER_IP="173.249.1.171"
 
 echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}Server Setup for spiffbox.xyz${NC}"
+echo -e "${BLUE}Server Setup for oregonstate.de${NC}"
 echo -e "${BLUE}========================================${NC}\n"
 
 # Check if running as root
@@ -40,8 +40,8 @@ echo -e "${BLUE}Updating /etc/hosts file...${NC}"
 cp /etc/hosts /etc/hosts.backup.$(date +%Y%m%d%H%M%S)
 
 # Remove old entries
-sed -i '/spiffbox.xyz/d' /etc/hosts
-sed -i '/mail.spiffbox/d' /etc/hosts
+sed -i '/oregonstate.de/d' /etc/hosts
+sed -i '/mail.oregonstate/d' /etc/hosts
 
 # Add new entries
 cat >> /etc/hosts <<EOF
