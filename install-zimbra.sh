@@ -289,7 +289,7 @@ download_zimbra() {
     
     # Download with progress
     if [[ ! -f "zimbra-installer.tgz" ]]; then
-        wget -O zimbra-installer.tgz "$ZIMBRA_DOWNLOAD_URL" 2>&1 | tee -a "${LOG_FILE}"
+        wget --no-check-certificate -O zimbra-installer.tgz "$ZIMBRA_DOWNLOAD_URL" 2>&1 | tee -a "${LOG_FILE}"
         
         if [[ $? -ne 0 ]]; then
             log_error "Failed to download Zimbra. Please check the download URL"
