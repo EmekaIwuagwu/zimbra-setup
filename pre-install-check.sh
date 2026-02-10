@@ -144,10 +144,10 @@ check_hostname() {
     
     if [[ -z "$FQDN" ]]; then
         print_fail "FQDN not properly configured (current: $SHORT_HOSTNAME)"
-        echo -e "       ${YELLOW}Set FQDN with: hostnamectl set-hostname mail.oregonstate.de${NC}"
+        echo -e "       ${YELLOW}Set FQDN with: hostnamectl set-hostname mail.maybax.de${NC}"
     elif [[ "$FQDN" == "$SHORT_HOSTNAME" ]] || [[ ! "$FQDN" =~ \. ]]; then
         print_fail "FQDN is same as short hostname (current: $FQDN)"
-        echo -e "       ${YELLOW}Set FQDN with: hostnamectl set-hostname mail.oregonstate.de${NC}"
+        echo -e "       ${YELLOW}Set FQDN with: hostnamectl set-hostname mail.maybax.de${NC}"
     elif [[ "$FQDN" =~ ^([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$ ]]; then
         print_pass "FQDN configured: $FQDN"
     else

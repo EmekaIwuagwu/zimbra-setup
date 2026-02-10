@@ -1,11 +1,11 @@
-# DNS Configuration Guide for oregonstate.de on Spaceship.com
+# DNS Configuration Guide for maybax.de on Spaceship.com
 
 ## 🌐 DNS Setup for Zimbra Mail Server
 
-**Domain**: oregonstate.de  
+**Domain**: maybax.de  
 **Mail Server IP**: 173.249.1.171  
 **Registrar**: Spaceship.com  
-**Mail Hostname**: mail.oregonstate.de  
+**Mail Hostname**: mail.maybax.de  
 
 ---
 
@@ -17,7 +17,7 @@
 2. Click **Sign In**
 3. Login with your credentials
 4. Navigate to **Domains** in your dashboard
-5. Click on **oregonstate.de**
+5. Click on **maybax.de**
 
 ### Step 2: Access DNS Settings
 
@@ -30,7 +30,7 @@
 
 ### 1. A Record (Mail Server)
 
-**Purpose**: Points mail.oregonstate.de to your server IP
+**Purpose**: Points mail.maybax.de to your server IP
 
 ```
 Type:     A
@@ -47,7 +47,7 @@ TTL:      3600 (or 1 hour)
 
 ### 2. A Record (Root Domain - Optional)
 
-**Purpose**: Points oregonstate.de to your server (if you want webmail at oregonstate.de)
+**Purpose**: Points maybax.de to your server (if you want webmail at maybax.de)
 
 ```
 Type:     A
@@ -64,12 +64,12 @@ TTL:      3600
 
 ### 3. MX Record (Mail Exchange)
 
-**Purpose**: Tells other mail servers where to send email for @oregonstate.de
+**Purpose**: Tells other mail servers where to send email for @maybax.de
 
 ```
 Type:     MX
 Host:     @  (or leave blank for root)
-Value:    mail.oregonstate.de
+Value:    mail.maybax.de
 Priority: 10
 TTL:      3600
 ```
@@ -77,11 +77,11 @@ TTL:      3600
 **In Spaceship.com interface:**
 - Record Type: `MX`
 - Name/Host: `@` or leave empty
-- Mail Server: `mail.oregonstate.de`
+- Mail Server: `mail.maybax.de`
 - Priority: `10`
 - TTL: `3600` or `Auto`
 
-**Important**: Make sure to include the trailing dot if required: `mail.oregonstate.de.`
+**Important**: Make sure to include the trailing dot if required: `mail.maybax.de.`
 
 ### 4. SPF Record (Spam Protection)
 
@@ -109,8 +109,8 @@ TTL:      3600
 First, get your DKIM public key after installing Zimbra:
 
 ```bash
-su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMSelector"
-su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
+su - zimbra -c "zmprov gd maybax.de zimbraDKIMSelector"
+su - zimbra -c "zmprov gd maybax.de zimbraDKIMPublicKey"
 ```
 
 Then add this DNS record:
@@ -135,14 +135,14 @@ TTL:      3600
 ```
 Type:     TXT
 Host:     _dmarc
-Value:    v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de; pct=100; fo=1
+Value:    v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de; pct=100; fo=1
 TTL:      3600
 ```
 
 **In Spaceship.com interface:**
 - Record Type: `TXT`
 - Name/Host: `_dmarc`
-- Text Value: `v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de; pct=100; fo=1`
+- Text Value: `v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de; pct=100; fo=1`
 - TTL: `3600` or `Auto`
 
 ### 7. PTR Record (Reverse DNS) - CRITICAL!
@@ -155,12 +155,12 @@ You MUST contact your **server hosting provider** to set this up.
 
 ```
 PTR Record:
-173.249.1.171 → mail.oregonstate.de
+173.249.1.171 → mail.maybax.de
 ```
 
 Or in reverse DNS format:
 ```
-171.1.249.173.in-addr.arpa → mail.oregonstate.de
+171.1.249.173.in-addr.arpa → mail.maybax.de
 ```
 
 **Why this is critical**: Without proper reverse DNS (PTR), many mail servers (especially Gmail, Outlook) will reject your emails as spam.
@@ -168,7 +168,7 @@ Or in reverse DNS format:
 **How to verify after setup:**
 ```bash
 nslookup 173.249.1.171
-# Should return: mail.oregonstate.de
+# Should return: mail.maybax.de
 
 # Or use:
 dig -x 173.249.1.171
@@ -184,10 +184,10 @@ After adding all records, your DNS zone should look like this:
 |------|-----------|-----------------|----------|-----|
 | A | mail | 173.249.1.171 | - | 3600 |
 | A | @ | 173.249.1.171 | - | 3600 |
-| MX | @ | mail.oregonstate.de | 10 | 3600 |
+| MX | @ | mail.maybax.de | 10 | 3600 |
 | TXT | @ | v=spf1 mx ip4:173.249.1.171 ~all | - | 3600 |
 | TXT | default._domainkey | v=DKIM1; k=rsa; p=YOUR_KEY... | - | 3600 |
-| TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de | - | 3600 |
+| TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de | - | 3600 |
 
 ---
 
@@ -198,53 +198,53 @@ After adding all records, your DNS zone should look like this:
 1. **Wait for DNS Propagation** (can take 1-24 hours)
    ```bash
    # Test A record
-   nslookup mail.oregonstate.de
+   nslookup mail.maybax.de
    # Should return: 173.249.1.171
    
    # Test MX record
-   nslookup -query=mx oregonstate.de
-   # Should return: mail.oregonstate.de
+   nslookup -query=mx maybax.de
+   # Should return: mail.maybax.de
    ```
 
 2. **Verify from multiple locations**
    - Use: https://dnschecker.org/
-   - Enter: `mail.oregonstate.de`
+   - Enter: `mail.maybax.de`
    - Check that it resolves to `173.249.1.171` globally
 
 3. **Check MX record**
    - Use: https://mxtoolbox.com/SuperTool.aspx
-   - Enter: `oregonstate.de`
-   - Verify MX record points to `mail.oregonstate.de`
+   - Enter: `maybax.de`
+   - Verify MX record points to `mail.maybax.de`
 
 ### After Installing Zimbra
 
 1. **Verify PTR record**
    ```bash
    dig -x 173.249.1.171
-   # Should return: mail.oregonstate.de
+   # Should return: mail.maybax.de
    ```
 
 2. **Test SPF record**
    ```bash
-   dig txt oregonstate.de
+   dig txt maybax.de
    # Should show: "v=spf1 mx ip4:173.249.1.171 ~all"
    ```
 
 3. **Test DKIM**
    ```bash
-   dig txt default._domainkey.oregonstate.de
+   dig txt default._domainkey.maybax.de
    # Should show your public key
    ```
 
 4. **Test DMARC**
    ```bash
-   dig txt _dmarc.oregonstate.de
+   dig txt _dmarc.maybax.de
    # Should show your DMARC policy
    ```
 
 5. **Complete mail server test**
    - Visit: https://mxtoolbox.com/emailhealth/
-   - Enter: `oregonstate.de`
+   - Enter: `maybax.de`
    - Review all checks (should be mostly green)
 
 ---
@@ -253,7 +253,7 @@ After adding all records, your DNS zone should look like this:
 
 ### Phase 1: DNS Setup (Do This FIRST - Before Installing Zimbra)
 
-1. ✅ Add A record for `mail.oregonstate.de`
+1. ✅ Add A record for `mail.maybax.de`
 2. ✅ Add A record for `@` (root domain)
 3. ✅ Add MX record
 4. ✅ Add SPF TXT record
@@ -288,15 +288,15 @@ sudo ./install-zimbra.sh
 ```
 
 When prompted:
-- **Hostname**: `mail.oregonstate.de`
-- **Domain**: `oregonstate.de`
+- **Hostname**: `mail.maybax.de`
+- **Domain**: `maybax.de`
 - **Admin Password**: (choose a strong password)
 
 ### Phase 5: Post-Installation (Add DKIM to DNS)
 
 1. Get DKIM public key:
    ```bash
-   su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
+   su - zimbra -c "zmprov gd maybax.de zimbraDKIMPublicKey"
    ```
 
 2. Go back to Spaceship.com DNS settings
@@ -319,10 +319,10 @@ sudo apt-get install -y certbot
 su - zimbra -c "zmproxyctl stop"
 
 # Get certificate
-sudo certbot certonly --standalone -d mail.oregonstate.de
+sudo certbot certonly --standalone -d mail.maybax.de
 
 # Deploy certificate
-su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem"
+su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.maybax.de/cert.pem /etc/letsencrypt/live/mail.maybax.de/chain.pem"
 
 # Restart Zimbra
 su - zimbra -c "zmcontrol restart"
@@ -349,8 +349,8 @@ su - zimbra -c "zmcontrol restart"
 ### Issue 2: MX Record Format
 
 **Spaceship.com may require:**
-- Ending dot: `mail.oregonstate.de.` (note the dot at the end)
-- Or without dot: `mail.oregonstate.de`
+- Ending dot: `mail.maybax.de.` (note the dot at the end)
+- Or without dot: `mail.maybax.de`
 
 Try the format that works in their interface.
 
@@ -378,7 +378,7 @@ Try the format that works in their interface.
 
 ### For PTR Record
 - Contact your server/VPS hosting provider
-- Provide: IP (173.249.1.171) → Hostname (mail.oregonstate.de)
+- Provide: IP (173.249.1.171) → Hostname (mail.maybax.de)
 
 ---
 
@@ -386,8 +386,8 @@ Try the format that works in their interface.
 
 Before running `./install-zimbra.sh`, verify:
 
-- [ ] A record for mail.oregonstate.de points to 173.249.1.171
-- [ ] MX record for oregonstate.de points to mail.oregonstate.de
+- [ ] A record for mail.maybax.de points to 173.249.1.171
+- [ ] MX record for maybax.de points to mail.maybax.de
 - [ ] SPF TXT record is added
 - [ ] DNS propagation complete (test with nslookup)
 - [ ] PTR record requested from hosting provider
@@ -399,12 +399,12 @@ Before running `./install-zimbra.sh`, verify:
 
 ## 🎯 Quick Access URLs (After Installation)
 
-**Admin Console**: https://mail.oregonstate.de:7071  
-**Webmail**: https://mail.oregonstate.de  
-**Also accessible at**: https://oregonstate.de (if you added root A record)
+**Admin Console**: https://mail.maybax.de:7071  
+**Webmail**: https://mail.maybax.de  
+**Also accessible at**: https://maybax.de (if you added root A record)
 
 **Default Admin Account**:
-- Username: `admin@oregonstate.de`
+- Username: `admin@maybax.de`
 - Password: (what you set during installation)
 
 ---

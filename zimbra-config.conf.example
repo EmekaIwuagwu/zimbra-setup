@@ -3,8 +3,8 @@
 # Usage: sudo ZIMBRA_CONFIG=./zimbra-config.conf ./install-zimbra.sh
 
 # Basic Configuration
-ZIMBRA_HOSTNAME="mail.oregonstate.de"
-ZIMBRA_DOMAIN="oregonstate.de"
+ZIMBRA_HOSTNAME="mail.maybax.de"
+ZIMBRA_DOMAIN="maybax.de"
 ADMIN_PASSWORD="ChangeThisPassword123!"
 
 # Zimbra Version (adjust based on latest available)

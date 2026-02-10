@@ -32,8 +32,8 @@ sudo ./install-zimbra.sh
 ```
 
 The installer will prompt you for:
-- Hostname (e.g., mail.oregonstate.de)
-- Domain (e.g., oregonstate.de)
+- Hostname (e.g., mail.maybax.de)
+- Domain (e.g., maybax.de)
 - Admin password
 
 Installation takes approximately 15-30 minutes.
@@ -60,15 +60,15 @@ This applies security best practices including:
 
 **Admin Console:**
 ```
-URL: https://mail.oregonstate.de:7071
-Username: admin@oregonstate.de
+URL: https://mail.maybax.de:7071
+Username: admin@maybax.de
 Password: [the password you set]
 ```
 
 **Webmail:**
 ```
-URL: https://mail.oregonstate.de
-Username: admin@oregonstate.de
+URL: https://mail.maybax.de
+Username: admin@maybax.de
 Password: [the password you set]
 ```
 
@@ -99,7 +99,7 @@ sudo ./install-zimbra.sh
 sudo ./post-install-hardening.sh
 
 # 9. Access admin console and configure
-# https://mail.oregonstate.de:7071
+# https://mail.maybax.de:7071
 
 # 10. Configure DNS records (see DNS Configuration below)
 
@@ -114,29 +114,29 @@ Add these DNS records at your domain registrar:
 
 ```dns
 # A Record
-mail.oregonstate.de.       IN  A       173.249.1.171
+mail.maybax.de.       IN  A       173.249.1.171
 
 # MX Record
-oregonstate.de.            IN  MX  10  mail.oregonstate.de.
+maybax.de.            IN  MX  10  mail.maybax.de.
 
 # TXT Record for SPF
-oregonstate.de.            IN  TXT     "v=spf1 mx ip4:173.249.1.171 ~all"
+maybax.de.            IN  TXT     "v=spf1 mx ip4:173.249.1.171 ~all"
 
 # DKIM Record (get from Zimbra after installation)
-default._domainkey.oregonstate.de. IN TXT "v=DKIM1; k=rsa; p=YOUR_PUBLIC_KEY"
+default._domainkey.maybax.de. IN TXT "v=DKIM1; k=rsa; p=YOUR_PUBLIC_KEY"
 
 # DMARC Record
-_dmarc.oregonstate.de.     IN  TXT     "v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de"
+_dmarc.maybax.de.     IN  TXT     "v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de"
 
 # PTR Record (configure at your hosting provider)
-171.1.249.173.in-addr.arpa. IN PTR  mail.oregonstate.de.
+171.1.249.173.in-addr.arpa. IN PTR  mail.maybax.de.
 ```
 
 ### Get DKIM Public Key
 
 ```bash
-su - zimbra -c "zmprov gd oregonstate.de zimbraDomainDKIMSelector"
-su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
+su - zimbra -c "zmprov gd maybax.de zimbraDomainDKIMSelector"
+su - zimbra -c "zmprov gd maybax.de zimbraDKIMPublicKey"
 ```
 
 ### SSL Certificate Installation
@@ -151,23 +151,23 @@ apt-get install -y certbot
 su - zimbra -c "zmproxyctl stop"
 
 # Get certificate
-certbot certonly --standalone -d mail.oregonstate.de
+certbot certonly --standalone -d mail.maybax.de
 
 # Deploy certificate
-su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem"
+su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.maybax.de/cert.pem /etc/letsencrypt/live/mail.maybax.de/chain.pem"
 
 # Restart Zimbra
 su - zimbra -c "zmcontrol restart"
 
 # Auto-renewal
-echo "0 3 * * * certbot renew --quiet && su - zimbra -c 'zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem' && su - zimbra -c 'zmcontrol restart'" | crontab -
+echo "0 3 * * * certbot renew --quiet && su - zimbra -c 'zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.maybax.de/cert.pem /etc/letsencrypt/live/mail.maybax.de/chain.pem' && su - zimbra -c 'zmcontrol restart'" | crontab -
 ```
 
 #### Using Commercial Certificate
 
 ```bash
 # 1. Generate CSR
-su - zimbra -c "/opt/zimbra/bin/zmcertmgr createcsr comm -new -subject '/C=US/ST=State/L=City/O=Organization/CN=mail.oregonstate.de'"
+su - zimbra -c "/opt/zimbra/bin/zmcertmgr createcsr comm -new -subject '/C=US/ST=State/L=City/O=Organization/CN=mail.maybax.de'"
 
 # 2. CSR will be in: /opt/zimbra/ssl/zimbra/commercial/commercial.csr
 # Submit this to your certificate authority
@@ -204,13 +204,13 @@ su - zimbra -c "zmmailboxdctl restart"
 
 ```bash
 # Create user
-su - zimbra -c "zmprov ca user@oregonstate.de 'password' displayName 'User Name'"
+su - zimbra -c "zmprov ca user@maybax.de 'password' displayName 'User Name'"
 
 # Delete user
-su - zimbra -c "zmprov da user@oregonstate.de"
+su - zimbra -c "zmprov da user@maybax.de"
 
 # Change password
-su - zimbra -c "zmprov sp user@oregonstate.de 'newpassword'"
+su - zimbra -c "zmprov sp user@maybax.de 'newpassword'"
 
 # List all users
 su - zimbra -c "zmprov -l gaa"
@@ -252,7 +252,7 @@ su - zimbra -c "/opt/zimbra/bin/zmbackup -f -a all -t full"
 su - zimbra -c "/opt/zimbra/bin/zmbackup query"
 
 # Restore account
-su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@oregonstate.de -pre restore"
+su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@maybax.de -pre restore"
 ```
 
 ## 📊 Monitoring
@@ -296,7 +296,7 @@ su - zimbra -c "zmcontrol start -v"
 ### Can't Login to Admin Console
 ```bash
 # Reset admin password
-su - zimbra -c "zmprov sp admin@oregonstate.de 'NewPassword123!'"
+su - zimbra -c "zmprov sp admin@maybax.de 'NewPassword123!'"
 
 # Check proxy is running
 su - zimbra -c "zmproxyctl status"

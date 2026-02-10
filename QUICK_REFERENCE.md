@@ -1,13 +1,13 @@
-# Quick Reference Card - oregonstate.de Zimbra Setup
+# Quick Reference Card - maybax.de Zimbra Setup
 
 ## 📋 Your Server Details
 
 ```
-Domain:           oregonstate.de
-Mail Server:      mail.oregonstate.de
+Domain:           maybax.de
+Mail Server:      mail.maybax.de
 IP Address:       173.249.1.171
 Registrar:        Spaceship.com
-Admin Email:      admin@oregonstate.de
+Admin Email:      admin@maybax.de
 ```
 
 ---
@@ -20,11 +20,11 @@ Login to Spaceship.com → DNS Settings → Add these records:
 | Type | Host | Value | Priority |
 |------|------|-------|----------|
 | A | mail | 173.249.1.171 | - |
-| MX | @ | mail.oregonstate.de | 10 |
+| MX | @ | mail.maybax.de | 10 |
 | TXT | @ | v=spf1 mx ip4:173.249.1.171 ~all | - |
-| TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de | - |
+| TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de | - |
 
-**CRITICAL**: Contact your server host to set PTR record: `173.249.1.171 → mail.oregonstate.de`
+**CRITICAL**: Contact your server host to set PTR record: `173.249.1.171 → mail.maybax.de`
 
 ### 2. Server Commands (Run in Order)
 
@@ -48,12 +48,12 @@ sudo ./pre-install-check.sh
 
 # Install Zimbra (15-30 min)
 sudo ./install-zimbra.sh
-# Enter: mail.oregonstate.de
-# Enter: oregonstate.de
+# Enter: mail.maybax.de
+# Enter: maybax.de
 # Enter: strong password
 
 # Get DKIM key and add to DNS
-su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
+su - zimbra -c "zmprov gd maybax.de zimbraDKIMPublicKey"
 # Copy key, add TXT record at default._domainkey
 
 # Security hardening
@@ -62,8 +62,8 @@ sudo ./post-install-hardening.sh
 # SSL certificate
 sudo apt-get install -y certbot
 su - zimbra -c "zmproxyctl stop"
-sudo certbot certonly --standalone -d mail.oregonstate.de
-su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem"
+sudo certbot certonly --standalone -d mail.maybax.de
+su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.maybax.de/cert.pem /etc/letsencrypt/live/mail.maybax.de/chain.pem"
 su - zimbra -c "zmcontrol restart"
 ```
 
@@ -71,9 +71,9 @@ su - zimbra -c "zmcontrol restart"
 
 ## 🔗 Access URLs
 
-**Admin Console**: https://mail.oregonstate.de:7071  
-**Webmail**: https://mail.oregonstate.de  
-**Username**: admin@oregonstate.de  
+**Admin Console**: https://mail.maybax.de:7071  
+**Webmail**: https://mail.maybax.de  
+**Username**: admin@maybax.de  
 **Password**: [what you set during installation]
 
 ---
@@ -95,10 +95,10 @@ su - zimbra -c "zmmailboxdctl restart"
 ### User Management
 ```bash
 # Create user
-su - zimbra -c "zmprov ca user@oregonstate.de 'password' displayName 'User Name'"
+su - zimbra -c "zmprov ca user@maybax.de 'password' displayName 'User Name'"
 
 # Reset password
-su - zimbra -c "zmprov sp user@oregonstate.de 'newpassword'"
+su - zimbra -c "zmprov sp user@maybax.de 'newpassword'"
 
 # List all users
 su - zimbra -c "zmprov -l gaa"
@@ -137,7 +137,7 @@ grep "authentication failed" /opt/zimbra/log/mailbox.log
 ls -lh /opt/zimbra/backup/
 
 # Restore account
-su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@oregonstate.de"
+su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@maybax.de"
 ```
 
 ---
@@ -147,19 +147,19 @@ su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@oregonstate.de"
 ### DNS Verification
 ```bash
 # A record
-nslookup mail.oregonstate.de
+nslookup mail.maybax.de
 # Should return: 173.249.1.171
 
 # MX record
-nslookup -query=mx oregonstate.de
-# Should return: mail.oregonstate.de
+nslookup -query=mx maybax.de
+# Should return: mail.maybax.de
 
 # PTR record
 nslookup 173.249.1.171
-# Should return: mail.oregonstate.de
+# Should return: mail.maybax.de
 
 # SPF record
-dig txt oregonstate.de
+dig txt maybax.de
 # Should show: v=spf1 mx ip4:173.249.1.171 ~all
 
 # Run verification script
@@ -173,19 +173,19 @@ echo "Test" | mail -s "Test" check-auth@verifier.port25.com
 
 # Check MXToolbox
 # Visit: https://mxtoolbox.com/emailhealth/
-# Enter: oregonstate.de
+# Enter: maybax.de
 ```
 
 ### Service Test
 ```bash
 # SMTP test
-telnet mail.oregonstate.de 25
+telnet mail.maybax.de 25
 
 # IMAP test
-telnet mail.oregonstate.de 143
+telnet mail.maybax.de 143
 
 # HTTPS test
-curl -I https://mail.oregonstate.de
+curl -I https://mail.maybax.de
 ```
 
 ---
@@ -194,20 +194,20 @@ curl -I https://mail.oregonstate.de
 
 ### IMAP Settings
 ```
-Server:     mail.oregonstate.de
+Server:     mail.maybax.de
 Port:       993
 Security:   SSL/TLS
-Username:   user@oregonstate.de
+Username:   user@maybax.de
 Password:   [user password]
 ```
 
 ### SMTP Settings
 ```
-Server:     mail.oregonstate.de
+Server:     mail.maybax.de
 Port:       587
 Security:   STARTTLS
 Auth:       Required
-Username:   user@oregonstate.de
+Username:   user@maybax.de
 Password:   [user password]
 ```
 
@@ -233,7 +233,7 @@ Password:   [user password]
 ### Can't login to admin console
 ```bash
 # Reset admin password
-su - zimbra -c "zmprov sp admin@oregonstate.de 'NewPassword123!'"
+su - zimbra -c "zmprov sp admin@maybax.de 'NewPassword123!'"
 
 # Restart proxy
 su - zimbra -c "zmproxyctl restart"
@@ -280,9 +280,9 @@ du -sh /opt/zimbra/backup/*
 ## 📱 Mobile Device Setup (iOS/Android)
 
 **Account Type**: Exchange  
-**Server**: mail.oregonstate.de  
-**Domain**: oregonstate.de  
-**Username**: user@oregonstate.de  
+**Server**: mail.maybax.de  
+**Domain**: maybax.de  
+**Username**: user@maybax.de  
 **Password**: [user password]  
 **Use SSL**: Yes  
 
@@ -315,7 +315,7 @@ du -sh /opt/zimbra/backup/*
 Configuration:  /opt/zimbra/
 Logs:          /opt/zimbra/log/
 Backups:          /opt/zimbra/backup/
-SSL Certs:     /etc/letsencrypt/live/mail.oregonstate.de/
+SSL Certs:     /etc/letsencrypt/live/mail.maybax.de/
 Install Logs:  /var/log/zimbra-install.log
 ```
 

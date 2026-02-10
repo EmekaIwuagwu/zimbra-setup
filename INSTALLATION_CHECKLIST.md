@@ -1,11 +1,11 @@
-# Zimbra Setup Checklist for oregonstate.de
+# Zimbra Setup Checklist for maybax.de
 
 ## Server Information
-- **Domain**: oregonstate.de
-- **Mail Server**: mail.oregonstate.de
+- **Domain**: maybax.de
+- **Mail Server**: mail.maybax.de
 - **IP Address**: 173.249.1.171
 - **Registrar**: Spaceship.com
-- **Admin Email**: admin@oregonstate.de
+- **Admin Email**: admin@maybax.de
 
 ---
 
@@ -13,7 +13,7 @@
 
 ### At Spaceship.com Dashboard
 
-Login to: https://www.spaceship.com/ → Domains → oregonstate.de → DNS Settings
+Login to: https://www.spaceship.com/ → Domains → maybax.de → DNS Settings
 
 #### Add These DNS Records:
 
@@ -32,7 +32,7 @@ Login to: https://www.spaceship.com/ → Domains → oregonstate.de → DNS Sett
 - [ ] **MX Record**
   - Type: `MX`
   - Host: `@` or leave blank
-  - Value: `mail.oregonstate.de`
+  - Value: `mail.maybax.de`
   - Priority: `10`
   - TTL: `3600`
 
@@ -45,7 +45,7 @@ Login to: https://www.spaceship.com/ → Domains → oregonstate.de → DNS Sett
 - [ ] **DMARC TXT Record**
   - Type: `TXT`
   - Host: `_dmarc`
-  - Value: `v=DMARC1; p=quarantine; rua=mailto:dmarc@oregonstate.de`
+  - Value: `v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de`
   - TTL: `3600`
 
 ### Contact Your Server Hosting Provider
@@ -53,7 +53,7 @@ Login to: https://www.spaceship.com/ → Domains → oregonstate.de → DNS Sett
 - [ ] **Request PTR (Reverse DNS) Record**
   - Tell them: "Please set up reverse DNS"
   - IP: `173.249.1.171`
-  - Should point to: `mail.oregonstate.de`
+  - Should point to: `mail.maybax.de`
   - Critical for email deliverability!
 
 ### Verify DNS Propagation
@@ -61,15 +61,15 @@ Login to: https://www.spaceship.com/ → Domains → oregonstate.de → DNS Sett
 - [ ] Wait 1-4 hours after adding records
 - [ ] Test A record:
   ```bash
-  nslookup mail.oregonstate.de
+  nslookup mail.maybax.de
   # Should show: 173.249.1.171
   ```
 - [ ] Test MX record:
   ```bash
-  nslookup -query=mx oregonstate.de
-  # Should show: mail.oregonstate.de
+  nslookup -query=mx maybax.de
+  # Should show: mail.maybax.de
   ```
-- [ ] Use online tool: https://dnschecker.org/ (enter `mail.oregonstate.de`)
+- [ ] Use online tool: https://dnschecker.org/ (enter `mail.maybax.de`)
 - [ ] All locations should show `173.249.1.171`
 
 ---
@@ -143,12 +143,12 @@ If you see failures, fix them:
 
 - [ ] **Hostname not set**: 
   ```bash
-  sudo hostnamectl set-hostname mail.oregonstate.de
+  sudo hostnamectl set-hostname mail.maybax.de
   ```
 - [ ] **Update /etc/hosts**:
   ```bash
   sudo nano /etc/hosts
-  # Add line: 173.249.1.171 mail.oregonstate.de mail
+  # Add line: 173.249.1.171 mail.maybax.de mail
   ```
 - [ ] **Low memory**: Add swap space
   ```bash
@@ -184,8 +184,8 @@ If you see failures, fix them:
 
 When prompted, enter:
 
-- [ ] **Hostname**: `mail.oregonstate.de`
-- [ ] **Domain**: `oregonstate.de`
+- [ ] **Hostname**: `mail.maybax.de`
+- [ ] **Domain**: `maybax.de`
 - [ ] **Admin Password**: (choose strong password - write it down!)
 - [ ] Confirm password
 - [ ] Wait 15-30 minutes for installation
@@ -204,7 +204,7 @@ When prompted, enter:
 
 - [ ] Switch to zimbra user and get DKIM key:
   ```bash
-  su - zimbra -c "zmprov gd oregonstate.de zimbraDKIMPublicKey"
+  su - zimbra -c "zmprov gd maybax.de zimbraDKIMPublicKey"
   ```
 - [ ] Copy the public key (long string starting with `MIGfMA0G...`)
 
@@ -223,7 +223,7 @@ When prompted, enter:
 
 - [ ] Test DKIM record:
   ```bash
-  dig txt default._domainkey.oregonstate.de
+  dig txt default._domainkey.maybax.de
   ```
 - [ ] Should show your DKIM public key
 
@@ -277,7 +277,7 @@ When prompted, enter:
 
 - [ ] Get Let's Encrypt certificate:
   ```bash
-  sudo certbot certonly --standalone -d mail.oregonstate.de
+  sudo certbot certonly --standalone -d mail.maybax.de
   ```
 - [ ] Enter email address when prompted
 - [ ] Agree to terms
@@ -287,7 +287,7 @@ When prompted, enter:
 
 - [ ] Deploy SSL certificate:
   ```bash
-  su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem"
+  su - zimbra -c "/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.maybax.de/cert.pem /etc/letsencrypt/live/mail.maybax.de/chain.pem"
   ```
 
 ### Restart Zimbra
@@ -310,7 +310,7 @@ When prompted, enter:
   ```
 - [ ] Add this line:
   ```
-  0 3 * * * certbot renew --quiet && su - zimbra -c '/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.oregonstate.de/cert.pem /etc/letsencrypt/live/mail.oregonstate.de/chain.pem' && su - zimbra -c 'zmcontrol restart'
+  0 3 * * * certbot renew --quiet && su - zimbra -c '/opt/zimbra/bin/zmcertmgr deploycrt comm /etc/letsencrypt/live/mail.maybax.de/cert.pem /etc/letsencrypt/live/mail.maybax.de/chain.pem' && su - zimbra -c 'zmcontrol restart'
   ```
 - [ ] Save and exit
 
@@ -320,16 +320,16 @@ When prompted, enter:
 
 ### Access Admin Console
 
-- [ ] Open browser to: `https://mail.oregonstate.de:7071`
+- [ ] Open browser to: `https://mail.maybax.de:7071`
 - [ ] Accept security warning (if using self-signed initially)
 - [ ] Login with:
-  - Username: `admin@oregonstate.de`
+  - Username: `admin@maybax.de`
   - Password: (your admin password)
 - [ ] Admin console loads successfully
 
 ### Access Webmail
 
-- [ ] Open browser to: `https://mail.oregonstate.de`
+- [ ] Open browser to: `https://mail.maybax.de`
 - [ ] Login with admin credentials
 - [ ] Webmail interface loads
 
@@ -338,7 +338,7 @@ When prompted, enter:
 - [ ] In admin console, go to: Manage → Accounts
 - [ ] Click "New"
 - [ ] Create test user:
-  - Email: `test@oregonstate.de`
+  - Email: `test@maybax.de`
   - Password: (set test password)
 - [ ] Save user
 
@@ -351,7 +351,7 @@ When prompted, enter:
 
 ### Test Email Receiving
 
-- [ ] Send email FROM external account TO `test@oregonstate.de`
+- [ ] Send email FROM external account TO `test@maybax.de`
 - [ ] Check if email arrives in Zimbra webmail
 - [ ] Verify email appears in inbox
 
@@ -359,28 +359,28 @@ When prompted, enter:
 
 - [ ] Test all DNS records with MXToolbox:
   - Go to: https://mxtoolbox.com/SuperTool.aspx
-  - Enter: `oregonstate.de`
+  - Enter: `maybax.de`
   - Check MX record ✓
   - Check SPF record ✓
   - Check DMARC record ✓
 
 - [ ] Test DKIM:
   - Go to: https://mxtoolbox.com/dkim.aspx
-  - Enter: `oregonstate.de`
+  - Enter: `maybax.de`
   - Selector: `default`
   - Should show valid DKIM ✓
 
 - [ ] Test reverse DNS:
   ```bash
   dig -x 173.249.1.171
-  # Should return: mail.oregonstate.de
+  # Should return: mail.maybax.de
   ```
 
 ### Email Health Check
 
 - [ ] Complete email health test:
   - Go to: https://mxtoolbox.com/emailhealth/
-  - Enter: `oregonstate.de`
+  - Enter: `maybax.de`
   - Review all results (should be mostly green)
 
 ### Test Email Deliverability
@@ -404,13 +404,13 @@ When prompted, enter:
 Provide users with these settings:
 
 **IMAP Settings:**
-- Server: `mail.oregonstate.de`
+- Server: `mail.maybax.de`
 - Port: `993`
 - Security: `SSL/TLS`
-- Username: `user@oregonstate.de`
+- Username: `user@maybax.de`
 
 **SMTP Settings:**
-- Server: `mail.oregonstate.de`
+- Server: `mail.maybax.de`
 - Port: `587`
 - Security: `STARTTLS`
 - Authentication: `Required`
@@ -479,16 +479,16 @@ Provide users with these settings:
 
 ### Access Points
 
-**Admin Console**: https://mail.oregonstate.de:7071  
-**Webmail**: https://mail.oregonstate.de  
-**Admin Email**: admin@oregonstate.de
+**Admin Console**: https://mail.maybax.de:7071  
+**Webmail**: https://mail.maybax.de  
+**Admin Email**: admin@maybax.de
 
 ### Important Files
 
 - Configuration: `/opt/zimbra/`
 - Logs: `/opt/zimbra/log/`
 - Backups: `/opt/zimbra/backup/`
-- SSL Certs: `/etc/letsencrypt/live/mail.oregonstate.de/`
+- SSL Certs: `/etc/letsencrypt/live/mail.maybax.de/`
 
 ### Support Resources
 
@@ -500,7 +500,7 @@ Provide users with these settings:
 
 ## 🎉 Congratulations!
 
-Your Zimbra mail server for **oregonstate.de** is now:
+Your Zimbra mail server for **maybax.de** is now:
 
 ✅ Fully installed and configured  
 ✅ DNS properly set up  
