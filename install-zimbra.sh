@@ -418,19 +418,38 @@ install_zimbra() {
     
     cd "$ZIMBRA_EXTRACT_DIR"
     
-    # Zimbra 10.1 PLUS does not support -y.
-    # We pipe 'y' for the initial license agreements and pass the config as the final argument.
+    # 1. Force the system to prioritize IPv4 for this session
+    export LIBPROCESS_IP=127.0.0.1
+    
     log_info "Executing installation with automated license acceptance..."
     
+    # Run the installer
     (echo "y"; echo "y"; echo "y") | ./install.sh --platform-override /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
     
-    # Check if zimbra user exists now
+    # 2. WAIT FOR LDAP - This is where it was failing
+    # The installer finishes the 'package' phase but LDAP might still be initializing
+    log_info "Waiting for LDAP service to respond on 127.0.0.1:389..."
+    MAX_RETRIES=30
+    COUNT=0
+    while ! nc -z 127.0.0.1 389; do
+        sleep 2
+        COUNT=$((COUNT + 1))
+        if [ $COUNT -ge $MAX_RETRIES ]; then
+            log_error "LDAP failed to start in time. Checking logs..."
+            [ -f /opt/zimbra/log/zmsetup.log ] && tail -n 20 /opt/zimbra/log/zmsetup.log
+            exit 1
+        fi
+        echo -n "."
+    done
+    echo " LDAP is UP."
+
+    # Check if zimbra user exists
     if ! id "zimbra" &>/dev/null; then
-        log_error "Zimbra installation finished but 'zimbra' user was not created. Check $LOG_FILE for errors."
+        log_error "Zimbra installation finished but 'zimbra' user was not created."
         exit 1
     fi
     
-    log "Zimbra packages installed successfully"
+    log "Zimbra core packages and LDAP initialized"
 }
 
 # Post-installation configuration
