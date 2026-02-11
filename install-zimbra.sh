@@ -428,15 +428,28 @@ install_zimbra() {
     
     cd "$ZIMBRA_EXTRACT_DIR"
     
-    # Run installer with automated config
-    ./install.sh -s < /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
+    # Zimbra installer asks for license agreement (twice) and sometimes DNS cache
+    # before it starts reading the silent-config file.
+    # We provide those 'y' answers followed by the config file content.
+    log_info "Starting interactive installer automation..."
     
-    if [[ $? -ne 0 ]]; then
-        log_error "Zimbra installation failed. Check log file: $LOG_FILE"
+    (
+      echo "y" # License 1
+      echo "y" # License 2
+      echo "y" # Check for platform?
+      echo "y" # Install DNS cache?
+      echo "y" # Verify DNS?
+      cat /tmp/zimbra-install-config
+    ) | ./install.sh --platform-override 2>&1 | tee -a "${LOG_FILE}"
+    
+    # Check if zimbra user exists now
+    if ! id "zimbra" &>/dev/null; then
+        log_error "Zimbra installation finished but 'zimbra' user was not created. Packages likely failed to install."
+        log_error "Please check the end of $LOG_FILE for details."
         exit 1
     fi
     
-    log "Zimbra installation completed successfully"
+    log "Zimbra packages installed successfully"
 }
 
 # Post-installation configuration
