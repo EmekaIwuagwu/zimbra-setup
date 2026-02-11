@@ -301,115 +301,126 @@ download_zimbra() {
 
 # Create installation config file
 create_install_config() {
-    # Clear previous failed setup files and force a clean environment
-    rm -rf /opt/zimbra/conf/ldap
+    log_info "Creating Zimbra installation configuration..."
+    
+    # Clear previous failed setup files
+    rm -rf /opt/zimbra/conf/ldap 2>/dev/null
+    
+    # Force proper locale
     export LC_ALL=en_US.UTF-8
     export LANG=en_US.UTF-8
     
-    # Use standard double quotes for Zimbra's parser. The single quotes were breaking the domain identity.
-    cat > /tmp/zimbra-install-config <<EOF
-AVDOMAIN="$ZIMBRA_DOMAIN"
-AVUSER="admin@$ZIMBRA_DOMAIN"
-CREATEADMIN="admin@$ZIMBRA_DOMAIN"
-CREATEADMINPASS="$ADMIN_PASSWORD"
-CREATEDOMAIN="$ZIMBRA_DOMAIN"
-DOCREATEADMIN="yes"
-DOCREATEDOMAIN="yes"
-DOTRAINSA="yes"
-EXPANDMENU="no"
-HOSTNAME="$ZIMBRA_HOSTNAME"
-HTTPPORT="8080"
-HTTPPROXY="TRUE"
-HTTPPROXYPORT="80"
-HTTPSPORT="8443"
-HTTPSPROXYPORT="443"
-IMAPPORT="7143"
-IMAPPROXYPORT="143"
-IMAPSSLPORT="7993"
-IMAPSSLPROXYPORT="993"
-INSTALL_WEBAPPS="service zimlet zimbra zimbraAdmin"
-JAVAHOME="/opt/zimbra/common/lib/jvm/java"
-LDAPAMAVISPASS="$ADMIN_PASSWORD"
-LDAPPOSTPASS="$ADMIN_PASSWORD"
-LDAPROOTPASS="$ADMIN_PASSWORD"
-LDAPADMINPASS="$ADMIN_PASSWORD"
-LDAPREPPASS="$ADMIN_PASSWORD"
-LDAPHOST="$ZIMBRA_HOSTNAME"
-LDAPPORT="389"
-LDAPREPLICATIONTYPE="master"
-LDAPSERVERID="1"
-LDAPBESSEARCHSET="set"
-MAILBOXDMEMORY="1024"
-MAILPROXY="TRUE"
-MODE="https"
-MYSQLMEMORYPERCENT="30"
-POPPORT="7110"
-POPPROXYPORT="110"
-POPSSLPORT="7995"
-POPSSLPROXYPORT="995"
-PROXYMODE="https"
-REMOVE="no"
-RUNARCHIVING="no"
-RUNAV="yes"
-RUNCBPOLICYD="no"
-RUNDKIM="yes"
-RUNSA="yes"
-RUNVMHA="no"
-SERVICEWEBAPP="yes"
-SMTPDEST="admin@$ZIMBRA_DOMAIN"
-SMTPHOST="$ZIMBRA_HOSTNAME"
-SMTPNOTIFY="yes"
-SMTPSOURCE="admin@$ZIMBRA_DOMAIN"
-SNMPNOTIFY="yes"
-SNMPTRAPHOST="$ZIMBRA_HOSTNAME"
-SPELLURL="http://$ZIMBRA_HOSTNAME:7780/aspell.php"
-STARTSERVERS="yes"
-SYSTEMMEMORY="3.8"
-TRAINSAHAM="ham.xxxxxx@$ZIMBRA_DOMAIN"
-TRAINSASPAM="spam.xxxxxx@$ZIMBRA_DOMAIN"
-UIWEBAPPS="yes"
-UPGRADE="yes"
-USEKBSHORTCUTS="TRUE"
-USESPELL="yes"
-VERSIONUPDATECHECKS="TRUE"
-VIRUSQUARANTINE="virus-quarantine.xxxxxx@$ZIMBRA_DOMAIN"
-ZIMBRA_REQ_SECURITY="yes"
-ldap_bes_searcher_password="$ADMIN_PASSWORD"
-ldap_dit_base_dn_config="cn=zimbra"
-ldap_nginx_password="$ADMIN_PASSWORD"
-mailboxd_directory="/opt/zimbra/mailboxd"
-mailboxd_keystore="/opt/zimbra/mailboxd/etc/keystore"
-mailboxd_keystore_password="$ADMIN_PASSWORD"
-mailboxd_server="jetty"
-mailboxd_truststore="/opt/zimbra/common/etc/java/cacerts"
-mailboxd_truststore_password="changeit"
-postfix_mail_owner="postfix"
-postfix_setgid_group="postdrop"
-ssl_default_digest="sha256"
-zimbraDNSMasterIP=""
-zimbraDNSTCPUpstream="no"
-zimbraDNSUseTCP="yes"
-zimbraDNSUseUDP="yes"
-zimbraDefaultDomainName="$ZIMBRA_DOMAIN"
-zimbraFeatureBriefcasesEnabled="Enabled"
-zimbraFeatureTasksEnabled="Enabled"
-zimbraIPMode="ipv4"
-zimbraMailProxy="TRUE"
-zimbraMtaMyNetworks="127.0.0.0/8 $SERVER_IP/32"
-zimbraPrefTimeZoneId="Europe/Berlin"
-zimbraReverseProxyLookupTarget="TRUE"
-zimbraVersionCheckInterval="1d"
-zimbraVersionCheckNotificationEmail="admin@$ZIMBRA_DOMAIN"
-zimbraVersionCheckNotificationEmailFrom="admin@$ZIMBRA_DOMAIN"
-zimbraVersionCheckSendNotifications="TRUE"
-zimbraWebProxy="TRUE"
-zimbra_ldap_userdn="uid=zimbra,cn=admins,cn=zimbra"
-zimbra_require_interprocess_security="1"
-zimbra_server_hostname="$ZIMBRA_HOSTNAME"
-INSTALL_PACKAGES="zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy"
-EOF
+    # CRITICAL: Zimbra's config parser does NOT support quotes around values
+    # The utilfunc.sh error happens when quotes are present
+    cat > /tmp/zimbra-install-config <<'CONFIGEOF'
+AVDOMAIN=${ZIMBRA_DOMAIN}
+AVUSER=admin@${ZIMBRA_DOMAIN}
+CREATEADMIN=admin@${ZIMBRA_DOMAIN}
+CREATEADMINPASS=${ADMIN_PASSWORD}
+CREATEDOMAIN=${ZIMBRA_DOMAIN}
+DOCREATEADMIN=yes
+DOCREATEDOMAIN=yes
+DOTRAINSA=yes
+EXPANDMENU=no
+HOSTNAME=${ZIMBRA_HOSTNAME}
+HTTPPORT=8080
+HTTPPROXY=TRUE
+HTTPPROXYPORT=80
+HTTPSPORT=8443
+HTTPSPROXYPORT=443
+IMAPPORT=7143
+IMAPPROXYPORT=143
+IMAPSSLPORT=7993
+IMAPSSLPROXYPORT=993
+INSTALL_WEBAPPS=service zimlet zimbra zimbraAdmin
+JAVAHOME=/opt/zimbra/common/lib/jvm/java
+LDAPAMAVISPASS=${ADMIN_PASSWORD}
+LDAPPOSTPASS=${ADMIN_PASSWORD}
+LDAPROOTPASS=${ADMIN_PASSWORD}
+LDAPADMINPASS=${ADMIN_PASSWORD}
+LDAPREPPASS=${ADMIN_PASSWORD}
+LDAPHOST=${ZIMBRA_HOSTNAME}
+LDAPPORT=389
+LDAPREPLICATIONTYPE=master
+LDAPSERVERID=1
+LDAPBESSEARCHSET=set
+MAILBOXDMEMORY=1024
+MAILPROXY=TRUE
+MODE=https
+MYSQLMEMORYPERCENT=30
+POPPORT=7110
+POPPROXYPORT=110
+POPSSLPORT=7995
+POPSSLPROXYPORT=995
+PROXYMODE=https
+REMOVE=no
+RUNARCHIVING=no
+RUNAV=yes
+RUNCBPOLICYD=no
+RUNDKIM=yes
+RUNSA=yes
+RUNVMHA=no
+SERVICEWEBAPP=yes
+SMTPDEST=admin@${ZIMBRA_DOMAIN}
+SMTPHOST=${ZIMBRA_HOSTNAME}
+SMTPNOTIFY=yes
+SMTPSOURCE=admin@${ZIMBRA_DOMAIN}
+SNMPNOTIFY=yes
+SNMPTRAPHOST=${ZIMBRA_HOSTNAME}
+SPELLURL=http://${ZIMBRA_HOSTNAME}:7780/aspell.php
+STARTSERVERS=yes
+SYSTEMMEMORY=3.8
+TRAINSAHAM=ham.xxxxxx@${ZIMBRA_DOMAIN}
+TRAINSASPAM=spam.xxxxxx@${ZIMBRA_DOMAIN}
+UIWEBAPPS=yes
+UPGRADE=yes
+USEKBSHORTCUTS=TRUE
+USESPELL=yes
+VERSIONUPDATECHECKS=TRUE
+VIRUSQUARANTINE=virus-quarantine.xxxxxx@${ZIMBRA_DOMAIN}
+ZIMBRA_REQ_SECURITY=yes
+ldap_bes_searcher_password=${ADMIN_PASSWORD}
+ldap_dit_base_dn_config=cn=zimbra
+ldap_nginx_password=${ADMIN_PASSWORD}
+mailboxd_directory=/opt/zimbra/mailboxd
+mailboxd_keystore=/opt/zimbra/mailboxd/etc/keystore
+mailboxd_keystore_password=${ADMIN_PASSWORD}
+mailboxd_server=jetty
+mailboxd_truststore=/opt/zimbra/common/etc/java/cacerts
+mailboxd_truststore_password=changeit
+postfix_mail_owner=postfix
+postfix_setgid_group=postdrop
+ssl_default_digest=sha256
+zimbraDNSMasterIP=
+zimbraDNSTCPUpstream=no
+zimbraDNSUseTCP=yes
+zimbraDNSUseUDP=yes
+zimbraDefaultDomainName=${ZIMBRA_DOMAIN}
+zimbraFeatureBriefcasesEnabled=Enabled
+zimbraFeatureTasksEnabled=Enabled
+zimbraIPMode=ipv4
+zimbraMailProxy=TRUE
+zimbraMtaMyNetworks=127.0.0.0/8 ${SERVER_IP}/32
+zimbraPrefTimeZoneId=Europe/Berlin
+zimbraReverseProxyLookupTarget=TRUE
+zimbraVersionCheckInterval=1d
+zimbraVersionCheckNotificationEmail=admin@${ZIMBRA_DOMAIN}
+zimbraVersionCheckNotificationEmailFrom=admin@${ZIMBRA_DOMAIN}
+zimbraVersionCheckSendNotifications=TRUE
+zimbraWebProxy=TRUE
+zimbra_ldap_userdn=uid=zimbra,cn=admins,cn=zimbra
+zimbra_require_interprocess_security=1
+zimbra_server_hostname=${ZIMBRA_HOSTNAME}
+INSTALL_PACKAGES=zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy
+CONFIGEOF
 
-    log "Installation configuration created"
+    # Now substitute the actual values
+    sed -i "s/\${ZIMBRA_DOMAIN}/$ZIMBRA_DOMAIN/g" /tmp/zimbra-install-config
+    sed -i "s/\${ZIMBRA_HOSTNAME}/$ZIMBRA_HOSTNAME/g" /tmp/zimbra-install-config
+    sed -i "s/\${ADMIN_PASSWORD}/$ADMIN_PASSWORD/g" /tmp/zimbra-install-config
+    sed -i "s/\${SERVER_IP}/$SERVER_IP/g" /tmp/zimbra-install-config
+
+    log "Installation configuration created without quotes"
 }
 
 # Install Zimbra
@@ -418,38 +429,62 @@ install_zimbra() {
     
     cd "$ZIMBRA_EXTRACT_DIR"
     
-    # 1. Force the system to prioritize IPv4 for this session
+    # CRITICAL FIX #1: Disable AppArmor for this install session
+    # AppArmor blocks LDAP (slapd) from binding to ports, causing "Connection Refused"
+    if systemctl is-active --quiet apparmor; then
+        log_warning "Temporarily stopping AppArmor to prevent LDAP blocking..."
+        systemctl stop apparmor
+        systemctl disable apparmor
+    fi
+    
+    # CRITICAL FIX #2: Force IPv4
     export LIBPROCESS_IP=127.0.0.1
     
-    log_info "Executing installation with automated license acceptance..."
+    log_info "Executing Zimbra installer with automated configuration..."
     
-    # Run the installer
+    # Run the installer - it will install packages but LDAP may not start immediately
     (echo "y"; echo "y"; echo "y") | ./install.sh --platform-override /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
     
-    # 2. WAIT FOR LDAP - This is where it was failing
-    # The installer finishes the 'package' phase but LDAP might still be initializing
-    log_info "Waiting for LDAP service to respond on 127.0.0.1:389..."
-    MAX_RETRIES=30
-    COUNT=0
-    while ! nc -z 127.0.0.1 389; do
-        sleep 2
-        COUNT=$((COUNT + 1))
-        if [ $COUNT -ge $MAX_RETRIES ]; then
-            log_error "LDAP failed to start in time. Checking logs..."
-            [ -f /opt/zimbra/log/zmsetup.log ] && tail -n 20 /opt/zimbra/log/zmsetup.log
-            exit 1
-        fi
-        echo -n "."
-    done
-    echo " LDAP is UP."
-
-    # Check if zimbra user exists
-    if ! id "zimbra" &>/dev/null; then
-        log_error "Zimbra installation finished but 'zimbra' user was not created."
+    INSTALL_EXIT_CODE=${PIPESTATUS[1]}
+    
+    if [ $INSTALL_EXIT_CODE -ne 0 ]; then
+        log_error "Zimbra installer returned error code: $INSTALL_EXIT_CODE"
+        log_error "Check the log at $LOG_FILE for details"
         exit 1
     fi
     
-    log "Zimbra core packages and LDAP initialized"
+    # CRITICAL FIX #3: Manually start LDAP and wait for it
+    log_info "Ensuring LDAP service is running..."
+    
+    # Start slapd manually if it's not running
+    if [ -f /opt/zimbra/common/sbin/slapd ]; then
+        su - zimbra -c "/opt/zimbra/bin/ldap start" 2>&1 | tee -a "${LOG_FILE}" || true
+        
+        # Wait for LDAP to respond
+        log_info "Waiting for LDAP to respond on 127.0.0.1:389..."
+        MAX_RETRIES=30
+        COUNT=0
+        while ! nc -z 127.0.0.1 389; do
+            sleep 2
+            COUNT=$((COUNT + 1))
+            if [ $COUNT -ge $MAX_RETRIES ]; then
+                log_error "LDAP failed to start. Checking processes and logs..."
+                ps aux | grep slapd
+                [ -f /opt/zimbra/log/slapd.log ] && tail -n 50 /opt/zimbra/log/slapd.log
+                exit 1
+            fi
+            echo -n "."
+        done
+        echo " LDAP is UP!"
+    fi
+
+    # Verify zimbra user exists
+    if ! id "zimbra" &>/dev/null; then
+        log_error "Zimbra user was not created during installation"
+        exit 1
+    fi
+    
+    log "Zimbra packages installed and LDAP initialized successfully"
 }
 
 # Post-installation configuration
