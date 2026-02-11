@@ -5,7 +5,7 @@
 ```
 Domain:           maybax.de
 Mail Server:      mail.maybax.de
-IP Address:       173.249.1.171
+IP Address:       144.91.106.134
 Registrar:        Spaceship.com
 Admin Email:      admin@maybax.de
 ```
@@ -30,7 +30,7 @@ Login to Spaceship.com → DNS Settings → Add these records:
 
 ```bash
 # SSH to server
-ssh root@173.249.1.171
+ssh root@144.91.106.134
 
 # Clone repository
 git clone https://github.com/EmekaIwuagwu/zimbra-setup.git

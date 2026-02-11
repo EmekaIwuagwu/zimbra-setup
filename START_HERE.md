@@ -39,15 +39,15 @@ Login to Spaceship.com → Domains → maybax.de → DNS Settings
 Add these DNS records:
 
 ```
-A      mail        173.249.1.171
+A      mail        144.91.106.134
 MX     @           mail.maybax.de    (priority: 10)
-TXT    @           v=spf1 mx ip4:173.249.1.171 ~all
+TXT    @           v=spf1 mx ip4:144.91.106.134 ~all
 TXT    _dmarc      v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de
 ```
 
 **CRITICAL**: Contact your server hosting provider to add:
 ```
-PTR: 173.249.1.171 → mail.maybax.de
+PTR: 144.91.106.134 → mail.maybax.de
 ```
 
 ⏰ **Wait 1-4 hours** for DNS propagation before continuing.
@@ -57,7 +57,7 @@ PTR: 173.249.1.171 → mail.maybax.de
 ### Step 2: SSH to Your Server
 
 ```bash
-ssh root@173.249.1.171
+ssh root@144.91.106.134
 ```
 
 ---
@@ -209,7 +209,7 @@ tail -50 /opt/zimbra/log/mailbox.log  # Check logs
                │ Wait 1-4 hours
                ↓
 ┌─────────────────────────────────────┐
-│ 2. SSH to server (173.249.1.171)   │
+│ 2. SSH to server (144.91.106.134)   │
 │    Clone repository                 │
 │    chmod +x *.sh                    │
 └──────────────┬──────────────────────┘
@@ -332,7 +332,7 @@ After completing installation, verify:
 
 ### Or Quick Install:
 1. Configure DNS at Spaceship.com
-2. SSH to server: `ssh root@173.249.1.171`
+2. SSH to server: `ssh root@144.91.106.134`
 3. Run:
 ```bash
 git clone https://github.com/EmekaIwuagwu/zimbra-setup.git

@@ -16,7 +16,7 @@ NC='\033[0m'
 
 HOSTNAME="mail.maybax.de"
 DOMAIN="maybax.de"
-SERVER_IP="173.249.1.171"
+SERVER_IP="144.91.106.134"
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}Server Setup for maybax.de${NC}"

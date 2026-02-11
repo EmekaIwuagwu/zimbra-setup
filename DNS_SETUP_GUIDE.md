@@ -2,9 +2,9 @@
 
 ## 🌐 DNS Setup for Zimbra Mail Server
 
-**Domain**: maybax.de  
-**Mail Server IP**: 173.249.1.171  
-**Registrar**: Spaceship.com  
+**Domain**: maybax.de
+**Mail Server IP**: 144.91.106.134
+**Registrar**: Spaceship.com
 **Mail Hostname**: mail.maybax.de  
 
 ---
@@ -35,14 +35,14 @@
 ```
 Type:     A
 Host:     mail
-Value:    173.249.1.171
+Value:    144.91.106.134
 TTL:      3600 (or 1 hour)
 ```
 
 **In Spaceship.com interface:**
 - Record Type: `A`
 - Name/Host: `mail`
-- Points to/Value: `173.249.1.171`
+- Points to/Value: `144.91.106.134`
 - TTL: `3600` or `Auto`
 
 ### 2. A Record (Root Domain - Optional)
@@ -52,14 +52,14 @@ TTL:      3600 (or 1 hour)
 ```
 Type:     A
 Host:     @  (or leave blank for root)
-Value:    173.249.1.171
+Value:    144.91.106.134
 TTL:      3600
 ```
 
 **In Spaceship.com interface:**
 - Record Type: `A`
 - Name/Host: `@` or leave empty
-- Points to/Value: `173.249.1.171`
+- Points to/Value: `144.91.106.134`
 - TTL: `3600` or `Auto`
 
 ### 3. MX Record (Mail Exchange)
@@ -90,14 +90,14 @@ TTL:      3600
 ```
 Type:     TXT
 Host:     @  (or leave blank for root)
-Value:    v=spf1 mx ip4:173.249.1.171 ~all
+Value:    v=spf1 mx ip4:144.91.106.134 ~all
 TTL:      3600
 ```
 
 **In Spaceship.com interface:**
 - Record Type: `TXT`
 - Name/Host: `@` or leave empty
-- Text Value: `v=spf1 mx ip4:173.249.1.171 ~all`
+- Text Value: `v=spf1 mx ip4:144.91.106.134 ~all`
 - TTL: `3600` or `Auto`
 
 ### 5. DKIM Record (Email Authentication)
@@ -155,23 +155,23 @@ You MUST contact your **server hosting provider** to set this up.
 
 ```
 PTR Record:
-173.249.1.171 → mail.maybax.de
+144.91.106.134 → mail.maybax.de
 ```
 
 Or in reverse DNS format:
 ```
-171.1.249.173.in-addr.arpa → mail.maybax.de
+134.106.91.144.in-addr.arpa → mail.maybax.de
 ```
 
 **Why this is critical**: Without proper reverse DNS (PTR), many mail servers (especially Gmail, Outlook) will reject your emails as spam.
 
 **How to verify after setup:**
 ```bash
-nslookup 173.249.1.171
+nslookup 144.91.106.134
 # Should return: mail.maybax.de
 
 # Or use:
-dig -x 173.249.1.171
+dig -x 144.91.106.134
 ```
 
 ---
@@ -182,10 +182,10 @@ After adding all records, your DNS zone should look like this:
 
 | Type | Name/Host | Value/Points To | Priority | TTL |
 |------|-----------|-----------------|----------|-----|
-| A | mail | 173.249.1.171 | - | 3600 |
-| A | @ | 173.249.1.171 | - | 3600 |
+| A | mail | 144.91.106.134 | - | 3600 |
+| A | @ | 144.91.106.134 | - | 3600 |
 | MX | @ | mail.maybax.de | 10 | 3600 |
-| TXT | @ | v=spf1 mx ip4:173.249.1.171 ~all | - | 3600 |
+| TXT | @ | v=spf1 mx ip4:144.91.106.134 ~all | - | 3600 |
 | TXT | default._domainkey | v=DKIM1; k=rsa; p=YOUR_KEY... | - | 3600 |
 | TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de | - | 3600 |
 
