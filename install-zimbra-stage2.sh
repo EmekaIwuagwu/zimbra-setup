@@ -62,70 +62,122 @@ if ! grep -q "$ZIMBRA_HOSTNAME" /etc/hosts; then
     echo "$SERVER_IP $ZIMBRA_HOSTNAME ${ZIMBRA_HOSTNAME%%.*}" >> /etc/hosts
 fi
 
-# Initialize LDAP manually with full visibility
-log "Initializing LDAP database manually..."
+# Create Zimbra configuration file for zmsetup
+log "Creating Zimbra configuration answers file..."
 
-# Create LDAP root password file
-LDAP_ROOT_PW=$(openssl rand -base64 32)
-echo -n "$LDAP_ROOT_PW" > /opt/zimbra/.ldap_root_password
-chown zimbra:zimbra /opt/zimbra/.ldap_root_password
-chmod 600 /opt/zimbra/.ldap_root_password
+cat > /tmp/zcs-answers <<ANSWERS_EOF
+AVDOMAIN=$ZIMBRA_DOMAIN
+AVUSER=admin@$ZIMBRA_DOMAIN
+CREATEADMIN=admin@$ZIMBRA_DOMAIN
+CREATEADMINPASS=$ADMIN_PASSWORD
+CREATEDOMAIN=$ZIMBRA_DOMAIN
+DOCREATEADMIN=yes
+DOCREATEDOMAIN=yes
+DOTRAINSA=yes
+EXPANDMENU=no
+HOSTNAME=$ZIMBRA_HOSTNAME
+HTTPPORT=8080
+HTTPPROXY=TRUE
+HTTPPROXYPORT=80
+HTTPSPORT=8443
+HTTPSPROXYPORT=443
+IMAPPORT=7143
+IMAPPROXYPORT=143
+IMAPSSLPORT=7993
+IMAPSSLPROXYPORT=993
+INSTALL_WEBAPPS=service zimlet zimbra zimbraAdmin
+JAVAHOME=/opt/zimbra/common/lib/jvm/java
+LDAPHOST=$ZIMBRA_HOSTNAME
+LDAPPORT=389
+LDAPREPLICATIONTYPE=master
+LDAPSERVERID=1
+LDAPROOTPASS=$ADMIN_PASSWORD
+LDAPADMINPASS=$ADMIN_PASSWORD
+LDAPREPPASS=$ADMIN_PASSWORD
+LDAPPOSTPASS=$ADMIN_PASSWORD
+LDAPAMAVISPASS=$ADMIN_PASSWORD
+MAILBOXDMEMORY=1024
+MAILPROXY=TRUE
+MODE=https
+MYSQLMEMORYPERCENT=30
+REMOVE=no
+RUNARCHIVING=no
+RUNAV=yes
+RUNCBPOLICYD=no
+RUNDKIM=yes
+RUNSA=yes
+RUNVMHA=no
+SERVICEWEBAPP=yes
+SMTPDEST=admin@$ZIMBRA_DOMAIN
+SMTPHOST=$ZIMBRA_HOSTNAME
+SMTPNOTIFY=yes
+SMTPSOURCE=admin@$ZIMBRA_DOMAIN
+SNMPNOTIFY=yes
+SNMPTRAPHOST=$ZIMBRA_HOSTNAME
+SPELLURL=http://$ZIMBRA_HOSTNAME:7780/aspell.php
+STARTSERVERS=yes
+SYSTEMMEMORY=3.8
+TRAINSAHAM=ham.xxxxxx@$ZIMBRA_DOMAIN
+TRAINSASPAM=spam.xxxxxx@$ZIMBRA_DOMAIN
+UIWEBAPPS=yes
+UPGRADE=yes
+USEKBSHORTCUTS=TRUE
+USESPELL=yes
+VERSIONUPDATECHECKS=TRUE
+VIRUSQUARANTINE=virus-quarantine.xxxxxx@$ZIMBRA_DOMAIN
+ZIMBRA_REQ_SECURITY=yes
+ldap_bes_searcher_password=$ADMIN_PASSWORD
+ldap_dit_base_dn_config=cn=zimbra
+ldap_nginx_password=$ADMIN_PASSWORD
+mailboxd_directory=/opt/zimbra/mailboxd
+mailboxd_keystore=/opt/zimbra/mailboxd/etc/keystore
+mailboxd_keystore_password=$ADMIN_PASSWORD
+mailboxd_server=jetty
+mailboxd_truststore=/opt/zimbra/common/etc/java/cacerts
+mailboxd_truststore_password=changeit
+postfix_mail_owner=postfix
+postfix_setgid_group=postdrop
+ssl_default_digest=sha256
+zimbraDefaultDomainName=$ZIMBRA_DOMAIN
+zimbraFeatureBriefcasesEnabled=Enabled
+zimbraFeatureTasksEnabled=Enabled
+zimbraIPMode=ipv4
+zimbraMailProxy=TRUE
+zimbraMtaMyNetworks=127.0.0.0/8 $SERVER_IP/32
+zimbraPrefTimeZoneId=Europe/Berlin
+zimbraReverseProxyLookupTarget=TRUE
+zimbraVersionCheckInterval=1d
+zimbraVersionCheckNotificationEmail=admin@$ZIMBRA_DOMAIN
+zimbraVersionCheckNotificationEmailFrom=admin@$ZIMBRA_DOMAIN
+zimbraVersionCheckSendNotifications=TRUE
+zimbraWebProxy=TRUE
+zimbra_ldap_userdn=uid=zimbra,cn=admins,cn=zimbra
+zimbra_require_interprocess_security=1
+zimbra_server_hostname=$ZIMBRA_HOSTNAME
+INSTALL_PACKAGES=zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy
+ANSWERS_EOF
 
-log "Starting LDAP initialization..."
+# Run zmsetup with the configuration file
+log "Running Zimbra configuration with zmsetup..."
+log "This will initialize LDAP, create domain, and configure all services..."
 
-# Run zmsetup with our configuration
-su - zimbra << ZIMBRA_EOF
-cd /opt/zimbra/bin
+/opt/zimbra/libexec/zmsetup.pl -c /tmp/zcs-answers 2>&1 | tee -a "$LOG_FILE"
 
-# Initialize LDAP
-./zmldapinit
+SETUP_EXIT_CODE=${PIPESTATUS[0]}
 
-# Check if LDAP started
-sleep 5
-./ldap status
-
-# If LDAP is running, create domain and admin
-if [ \$? -eq 0 ]; then
-    echo "LDAP is running - creating domain and admin account..."
+if [ $SETUP_EXIT_CODE -ne 0 ]; then
+    log_error "Zimbra configuration failed with exit code: $SETUP_EXIT_CODE"
+    log_error "Check the logs:"
+    log_error "  - $LOG_FILE"
+    log_error "  - /opt/zimbra/log/zmsetup.log"
     
-    # Create domain
-    ./zmprov cd $ZIMBRA_DOMAIN zimbraPublicServiceProtocol https zimbraPublicServiceHostname $ZIMBRA_HOSTNAME
+    if [ -f /opt/zimbra/log/slapd.log ]; then
+        log_error "LDAP log:"
+        tail -n 50 /opt/zimbra/log/slapd.log
+    fi
     
-    # Create admin account  
-    ./zmprov ca admin@$ZIMBRA_DOMAIN "$ADMIN_PASSWORD" zimbraIsAdminAccount TRUE
-    
-    # Set services
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled mta
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled mailbox
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled antispam
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled antivirus
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled ldap
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled logger
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled snmp
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled spell
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled proxy
-    ./zmprov ms $ZIMBRA_HOSTNAME zimbraServiceEnabled stats
-    
-    echo "Configuration complete!"
-else
-    echo "ERROR: LDAP failed to start"
-    cat /opt/zimbra/log/slapd.log
     exit 1
 fi
-ZIMBRA_EOF
-
-if [ $? -ne 0 ]; then
-    log_error "LDAP initialization failed. Check /opt/zimbra/log/slapd.log"
-    cat /opt/zimbra/log/slapd.log
-    exit 1
-fi
-
-# Start all Zimbra services
-log "Starting Zimbra services..."
-su - zimbra -c "zmcontrol start"
-
-# Wait for services to come up
-sleep 10
 
 # Check status
 log "Checking service status..."
