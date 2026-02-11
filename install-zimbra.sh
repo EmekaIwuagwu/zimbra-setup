@@ -414,12 +414,11 @@ install_zimbra() {
     
     cd "$ZIMBRA_EXTRACT_DIR"
     
-    # Zimbra silent install requires -s.
-    # We add -y to automatically accept "The system will be modified" and other confirmations.
-    log_info "Executing silent installation with automatic confirmation..."
+    # Zimbra 10.1 PLUS does not support -y.
+    # We pipe 'y' for the initial license agreements and pass the config as the final argument.
+    log_info "Executing installation with automated license acceptance..."
     
-    # We pipe 'y' for the initial license agreements which sometimes bypass -s
-    (echo "y"; echo "y"; echo "y") | ./install.sh -s -y --platform-override < /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
+    (echo "y"; echo "y"; echo "y") | ./install.sh --platform-override /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
     
     # Check if zimbra user exists now
     if ! id "zimbra" &>/dev/null; then
