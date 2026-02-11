@@ -55,21 +55,37 @@ for service in postfix sendmail; do
 done
 
 # Download Zimbra
-ZIMBRA_VERSION="10.1.0_PLUS_GA_4655"
-ZIMBRA_URL="https://files.zimbra.com/downloads/10.1.0_PLUS_GA/zcs-${ZIMBRA_VERSION}.UBUNTU22_64.20241101151835.tgz"
-DOWNLOAD_DIR="/tmp/zimbra-installer"
+ZIMBRA_VERSION="10.1.0"
+ZIMBRA_DOWNLOAD_URL="https://packages.zcsplus.com/dlz/zcs-PLUS-${ZIMBRA_VERSION}_GA_4655.UBUNTU22_64.20240819064312.tgz"
+DOWNLOAD_DIR="/tmp/zimbra-install"
 
 log "Downloading Zimbra ${ZIMBRA_VERSION}..."
 mkdir -p "$DOWNLOAD_DIR"
 cd "$DOWNLOAD_DIR"
 
-if [ ! -f "zcs-${ZIMBRA_VERSION}.UBUNTU22_64.20241101151835.tgz" ]; then
-    wget --no-check-certificate "$ZIMBRA_URL" -O "zcs-${ZIMBRA_VERSION}.UBUNTU22_64.20241101151835.tgz"
+if [ ! -f "zimbra-installer.tgz" ]; then
+    wget --no-check-certificate -O zimbra-installer.tgz "$ZIMBRA_DOWNLOAD_URL"
+    if [ $? -ne 0 ]; then
+        log_error "Failed to download Zimbra. Check your internet connection."
+        exit 1
+    fi
+else
+    log "Zimbra installer already downloaded"
 fi
 
 log "Extracting installer..."
-tar xzf "zcs-${ZIMBRA_VERSION}.UBUNTU22_64.20241101151835.tgz"
-cd "zcs-${ZIMBRA_VERSION}.UBUNTU22_64.20241101151835"
+tar xzf zimbra-installer.tgz
+
+# Find extracted directory
+ZIMBRA_EXTRACT_DIR=$(find . -maxdepth 1 -type d -name "zcs-*" | head -n 1)
+
+if [ -z "$ZIMBRA_EXTRACT_DIR" ]; then
+    log_error "Failed to extract Zimbra installer"
+    exit 1
+fi
+
+cd "$ZIMBRA_EXTRACT_DIR"
+log "Using installer: $ZIMBRA_EXTRACT_DIR"
 
 # Install system dependencies
 log "Installing system dependencies..."
