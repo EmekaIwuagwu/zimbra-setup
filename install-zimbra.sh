@@ -89,50 +89,36 @@ check_ubuntu_version() {
 
 # Gather installation parameters
 gather_parameters() {
-    log_info "Gathering installation parameters..."
+    log_info "Gathering installation parameters from zimbra-config.conf..."
     
-    # Get hostname
+    if [[ -f "zimbra-config.conf" ]]; then
+        source zimbra-config.conf
+        ZIMBRA_HOSTNAME=$ZIMBRA_HOSTNAME
+        ZIMBRA_DOMAIN=$ZIMBRA_DOMAIN
+        ADMIN_PASSWORD=$ADMIN_PASSWORD
+        SERVER_IP=$SERVER_IP
+    fi
+    
+    # Get hostname if still empty
     if [[ -z "$ZIMBRA_HOSTNAME" ]]; then
         read -p "Enter Zimbra server hostname (e.g., mail.example.com): " ZIMBRA_HOSTNAME
-        if [[ -z "$ZIMBRA_HOSTNAME" ]]; then
-            log_error "Hostname cannot be empty"
-            exit 1
-        fi
     fi
     
-    # Extract domain from hostname
+    # Extract domain from hostname if still empty
     if [[ -z "$ZIMBRA_DOMAIN" ]]; then
         ZIMBRA_DOMAIN=$(echo "$ZIMBRA_HOSTNAME" | cut -d. -f2-)
-        read -p "Detected domain: $ZIMBRA_DOMAIN. Is this correct? (y/n): " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            read -p "Enter domain name: " ZIMBRA_DOMAIN
-        fi
     fi
     
-    # Get admin password
+    # Get admin password if still empty
     if [[ -z "$ADMIN_PASSWORD" ]]; then
-        while true; do
-            read -s -p "Enter Zimbra admin password (min 8 characters): " ADMIN_PASSWORD
-            echo
-            read -s -p "Confirm password: " ADMIN_PASSWORD_CONFIRM
-            echo
-            
-            if [[ "$ADMIN_PASSWORD" == "$ADMIN_PASSWORD_CONFIRM" ]]; then
-                if [[ ${#ADMIN_PASSWORD} -lt 8 ]]; then
-                    log_error "Password must be at least 8 characters"
-                    continue
-                fi
-                break
-            else
-                log_error "Passwords do not match"
-            fi
-        done
+        read -s -p "Enter Zimbra admin password: " ADMIN_PASSWORD
+        echo
     fi
     
-    log "Configuration:"
+    log "Definitive Configuration:"
     log "  Hostname: $ZIMBRA_HOSTNAME"
     log "  Domain: $ZIMBRA_DOMAIN"
+    log "  IP: $SERVER_IP"
 }
 
 # Check system requirements
@@ -348,8 +334,8 @@ LDAPBESSEARCHSET="set"
 LDAPHOST="$ZIMBRA_HOSTNAME"
 LDAPPORT="389"
 LDAPREPLICATIONTYPE="master"
-LDAPSERVERID="2"
-MAILBOXDMEMORY="512"
+LDAPSERVERID="1"
+MAILBOXDMEMORY="1024"
 MAILPROXY="TRUE"
 MODE="https"
 MYSQLMEMORYPERCENT="30"
@@ -404,15 +390,15 @@ zimbraDefaultDomainName="$ZIMBRA_DOMAIN"
 zimbraFeatureBriefcasesEnabled="Enabled"
 zimbraFeatureTasksEnabled="Enabled"
 zimbraIPMode="ipv4"
-zimbraMailProxy="FALSE"
+zimbraMailProxy="TRUE"
 zimbraMtaMyNetworks="127.0.0.0/8 $SERVER_IP/32 [::1]/128 [fe80::]/64"
-zimbraPrefTimeZoneId="America/New_York"
+zimbraPrefTimeZoneId="Europe/Berlin"
 zimbraReverseProxyLookupTarget="TRUE"
 zimbraVersionCheckInterval="1d"
 zimbraVersionCheckNotificationEmail="admin@$ZIMBRA_DOMAIN"
 zimbraVersionCheckNotificationEmailFrom="admin@$ZIMBRA_DOMAIN"
 zimbraVersionCheckSendNotifications="TRUE"
-zimbraWebProxy="FALSE"
+zimbraWebProxy="TRUE"
 zimbra_ldap_userdn="uid=zimbra,cn=admins,cn=zimbra"
 zimbra_require_interprocess_security="1"
 zimbra_server_hostname="$ZIMBRA_HOSTNAME"
