@@ -110,12 +110,14 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y \
 # Create a modified install script that ONLY installs packages
 log "Installing Zimbra packages (NO configuration)..."
 
-# Run installer with -s flag (skip configuration)
-./install.sh -s << 'INSTALLER_EOF'
-y
-y
-y
-INSTALLER_EOF
+# Run installer with -s flag (skip configuration) and answer all prompts
+# The multiple "y" answers handle: license, system modification, and package installation confirmations
+yes | ./install.sh -s 2>&1 | tee -a "$LOG_FILE"
+
+if [ ${PIPESTATUS[1]} -ne 0 ]; then
+    log_error "Package installation failed. Check $LOG_FILE for details"
+    exit 1
+fi
 
 log ""
 log "=========================================="
