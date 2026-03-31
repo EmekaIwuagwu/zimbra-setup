@@ -215,8 +215,6 @@ install_dependencies() {
         log "Using Ubuntu 20.04 package names"
     fi
     
-    fi
-    
     # Clean up any previously failing zimbra list
     rm -f /etc/apt/sources.list.d/zimbra.list 2>/dev/null
     
