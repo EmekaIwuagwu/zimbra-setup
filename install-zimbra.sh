@@ -461,6 +461,15 @@ install_zimbra() {
     # CRITICAL FIX #2: Force IPv4
     export LIBPROCESS_IP=127.0.0.1
     
+    # ATOMIC FIX: Pre-install all local components using dpkg to satisfy installer
+    log_info "Pre-installing bundled components from packages/ directory..."
+    if [ -d "packages" ]; then
+        # Install all .deb files found in packages/ to ensure the installer sees them as 'FOUND'
+        # We use --force-depends because some may have circular dependencies
+        DEBIAN_FRONTEND=noninteractive dpkg -i --force-depends packages/*.deb 2>/dev/null || true
+        DEBIAN_FRONTEND=noninteractive apt-get install -fy -qq 2>/dev/null || true
+    fi
+    
     log_info "Executing Zimbra installer with automated configuration..."
     
     # Run the installer with correctly ordered flags
