@@ -247,7 +247,16 @@ install_dependencies() {
         rsyslog \
         net-tools 2>&1 | tee -a "${LOG_FILE}"
     
-    log "Dependencies installed successfully"
+    # ADDED: Configure system limits for zimbra user
+    log_info "Configuring system limits for zimbra user..."
+    grep -q "zimbra soft nofile" /etc/security/limits.conf || {
+        echo "zimbra soft nofile 524288" >> /etc/security/limits.conf
+        echo "zimbra hard nofile 524288" >> /etc/security/limits.conf
+        echo "zimbra soft nproc 524288" >> /etc/security/limits.conf
+        echo "zimbra hard nproc 524288" >> /etc/security/limits.conf
+    }
+    
+    log "Dependencies and limits configured successfully"
 }
 
 # Configure firewall
@@ -449,12 +458,17 @@ install_zimbra() {
     cd "$ZIMBRA_EXTRACT_DIR"
     
     # CRITICAL FIX #1: Disable AppArmor for this install session
-    # AppArmor blocks LDAP (slapd) from binding to ports, causing "Connection Refused"
     if systemctl is-active --quiet apparmor; then
         log_warning "Temporarily stopping AppArmor to prevent LDAP blocking..."
         systemctl stop apparmor
         systemctl disable apparmor
     fi
+    
+    # ADDED: Disable Transparent Huge Pages (THP)
+    # Zimbra LDAP is very sensitive to THP and can fail to start/initialize
+    log_info "Optimizing memory settings for LDAP (disabling THP)..."
+    echo never > /sys/kernel/mm/transparent_hugepage/enabled 2>/dev/null || true
+    echo never > /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null || true
     
     # CRITICAL FIX #2: Force IPv4
     export LIBPROCESS_IP=127.0.0.1
