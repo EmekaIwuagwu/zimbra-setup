@@ -215,26 +215,15 @@ install_dependencies() {
         log "Using Ubuntu 20.04 package names"
     fi
     
-    # ADDED: Configure Zimbra Repositories manually for Ubuntu 24.04/22.04 compatibility
-    log_info "Configuring Zimbra and ZCSPlus repositories..."
+    fi
     
-    # Install gnupg if missing
-    apt-get install -y gnupg 2>/dev/null
+    # Clean up any previously failing zimbra list
+    rm -f /etc/apt/sources.list.d/zimbra.list 2>/dev/null
     
-    # Add Zimbra Repository GPG Key
-    wget -qO - https://repo.zimbra.com/downloads/zimbra-pubkey.asc | gpg --dearmor > /usr/share/keyrings/zimbra.gpg 2>/dev/null || true
-    
-    # Add Zimbra Repository (using jammy for better compatibility on 22/24)
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/zimbra.gpg] https://repo.zimbra.com/apt/87 jammy zimbra" > /etc/apt/sources.list.d/zimbra.list
-    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/zimbra.gpg] https://repo.zimbra.com/apt/1000 jammy zimbra" >> /etc/apt/sources.list.d/zimbra.list
-    
-    # Add ZCSPlus Repository
-    echo "deb [arch=amd64] https://packages.zcsplus.com/apt jammy main" >> /etc/apt/sources.list.d/zimbra.list
-    
-    # Update package lists again with new repos
+    # Update package lists
     apt-get update -qq || true
     
-    log "Repositories configured"
+    log "Base repositories updated"
     
     # Install prerequisites
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
