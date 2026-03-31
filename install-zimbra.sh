@@ -472,8 +472,7 @@ install_zimbra() {
     
     # Run the installer with correctly ordered flags
     # --platform-override to bypass OS version check
-    # -c to specify the configuration file
-    (echo "y"; echo "y"; echo "y") | ./install.sh --platform-override -c /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
+    (echo "y"; echo "y"; echo "y") | ./install.sh --platform-override /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
     
     INSTALL_EXIT_CODE=${PIPESTATUS[1]}
     
