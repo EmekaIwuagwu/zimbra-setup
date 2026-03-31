@@ -318,6 +318,17 @@ download_zimbra() {
     fi
     
     log "Zimbra extracted to: $ZIMBRA_EXTRACT_DIR"
+    
+    # PATCH: Force the installer to treat this as Ubuntu 22.04 (Jammy)
+    # This ensures it finds the bundled packages in the packages/ directory
+    log_info "Patching installer for Ubuntu compatibility..."
+    if [ -f "$ZIMBRA_EXTRACT_DIR/bin/get_plat_tag.sh" ]; then
+        sed -i 's/UBUNTU24_64/UBUNTU22_64/g' "$ZIMBRA_EXTRACT_DIR/bin/get_plat_tag.sh" 2>/dev/null || true
+        # Also force the return value if it fails to detect
+        echo "echo UBUNTU22_64; exit 0" > "$ZIMBRA_EXTRACT_DIR/bin/get_plat_tag.sh"
+    fi
+    
+    log "Installer patched to force UBUNTU22_64 platform"
 }
 
 # Create installation config file
@@ -463,8 +474,10 @@ install_zimbra() {
     
     log_info "Executing Zimbra installer with automated configuration..."
     
-    # Run the installer - it will install packages but LDAP may not start immediately
-    (echo "y"; echo "y"; echo "y") | ./install.sh --platform-override /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
+    # Run the installer with correctly ordered flags
+    # --platform-override to bypass OS version check
+    # -c to specify the configuration file
+    (echo "y"; echo "y"; echo "y") | ./install.sh --platform-override -c /tmp/zimbra-install-config 2>&1 | tee -a "${LOG_FILE}"
     
     INSTALL_EXIT_CODE=${PIPESTATUS[1]}
     
