@@ -215,6 +215,27 @@ install_dependencies() {
         log "Using Ubuntu 20.04 package names"
     fi
     
+    # ADDED: Configure Zimbra Repositories manually for Ubuntu 24.04/22.04 compatibility
+    log_info "Configuring Zimbra and ZCSPlus repositories..."
+    
+    # Install gnupg if missing
+    apt-get install -y gnupg 2>/dev/null
+    
+    # Add Zimbra Repository GPG Key
+    wget -qO - https://repo.zimbra.com/downloads/zimbra-pubkey.asc | gpg --dearmor > /usr/share/keyrings/zimbra.gpg 2>/dev/null || true
+    
+    # Add Zimbra Repository (using jammy for better compatibility on 22/24)
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/zimbra.gpg] https://repo.zimbra.com/apt/87 jammy zimbra" > /etc/apt/sources.list.d/zimbra.list
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/zimbra.gpg] https://repo.zimbra.com/apt/1000 jammy zimbra" >> /etc/apt/sources.list.d/zimbra.list
+    
+    # Add ZCSPlus Repository
+    echo "deb [arch=amd64] https://packages.zcsplus.com/apt jammy main" >> /etc/apt/sources.list.d/zimbra.list
+    
+    # Update package lists again with new repos
+    apt-get update -qq || true
+    
+    log "Repositories configured"
+    
     # Install prerequisites
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libgmp10 \
@@ -332,7 +353,7 @@ IMAPPORT=7143
 IMAPPROXYPORT=143
 IMAPSSLPORT=7993
 IMAPSSLPROXYPORT=993
-INSTALL_WEBAPPS=service zimlet zimbra zimbraAdmin
+INSTALL_WEBAPPS="service zimlet zimbra zimbraAdmin"
 JAVAHOME=/opt/zimbra/common/lib/jvm/java
 LDAPAMAVISPASS=${ADMIN_PASSWORD}
 LDAPPOSTPASS=${ADMIN_PASSWORD}
@@ -400,7 +421,7 @@ zimbraFeatureBriefcasesEnabled=Enabled
 zimbraFeatureTasksEnabled=Enabled
 zimbraIPMode=ipv4
 zimbraMailProxy=TRUE
-zimbraMtaMyNetworks=127.0.0.0/8 ${SERVER_IP}/32
+zimbraMtaMyNetworks="127.0.0.0/8 ${SERVER_IP}/32"
 zimbraPrefTimeZoneId=Europe/Berlin
 zimbraReverseProxyLookupTarget=TRUE
 zimbraVersionCheckInterval=1d
@@ -411,7 +432,7 @@ zimbraWebProxy=TRUE
 zimbra_ldap_userdn=uid=zimbra,cn=admins,cn=zimbra
 zimbra_require_interprocess_security=1
 zimbra_server_hostname=${ZIMBRA_HOSTNAME}
-INSTALL_PACKAGES=zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy
+INSTALL_PACKAGES="zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy"
 CONFIGEOF
 
     # Now substitute the actual values
