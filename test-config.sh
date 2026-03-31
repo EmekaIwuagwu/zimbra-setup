@@ -5,7 +5,7 @@
 ZIMBRA_DOMAIN="maybax.de"
 ZIMBRA_HOSTNAME="mail.maybax.de"
 ADMIN_PASSWORD="maybax2024!"
-SERVER_IP="144.91.106.134"
+SERVER_IP="5.189.184.167"
 
 echo "Testing configuration file generation..."
 

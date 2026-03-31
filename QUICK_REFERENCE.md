@@ -5,7 +5,7 @@
 ```
 Domain:           maybax.de
 Mail Server:      mail.maybax.de
-IP Address:       144.91.106.134
+IP Address:       5.189.184.167
 Registrar:        Spaceship.com
 Admin Email:      admin@maybax.de
 ```
@@ -19,18 +19,18 @@ Login to Spaceship.com → DNS Settings → Add these records:
 
 | Type | Host | Value | Priority |
 |------|------|-------|----------|
-| A | mail | 173.249.1.171 | - |
+| A | mail | 5.189.184.167 | - |
 | MX | @ | mail.maybax.de | 10 |
-| TXT | @ | v=spf1 mx ip4:173.249.1.171 ~all | - |
+| TXT | @ | v=spf1 mx ip4:5.189.184.167 ~all | - |
 | TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de | - |
 
-**CRITICAL**: Contact your server host to set PTR record: `173.249.1.171 → mail.maybax.de`
+**CRITICAL**: Contact your server host to set PTR record: `5.189.184.167 → mail.maybax.de`
 
 ### 2. Server Commands (Run in Order)
 
 ```bash
 # SSH to server
-ssh root@144.91.106.134
+ssh root@5.189.184.167
 
 # Clone repository
 git clone https://github.com/EmekaIwuagwu/zimbra-setup.git
@@ -148,19 +148,19 @@ su - zimbra -c "/opt/zimbra/bin/zmrestore -a user@maybax.de"
 ```bash
 # A record
 nslookup mail.maybax.de
-# Should return: 173.249.1.171
+# Should return: 5.189.184.167
 
 # MX record
 nslookup -query=mx maybax.de
 # Should return: mail.maybax.de
 
 # PTR record
-nslookup 173.249.1.171
+nslookup 5.189.184.167
 # Should return: mail.maybax.de
 
 # SPF record
 dig txt maybax.de
-# Should show: v=spf1 mx ip4:173.249.1.171 ~all
+# Should show: v=spf1 mx ip4:5.189.184.167 ~all
 
 # Run verification script
 ./verify-dns.sh

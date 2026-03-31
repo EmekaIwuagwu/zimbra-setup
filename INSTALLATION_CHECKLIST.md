@@ -3,7 +3,7 @@
 ## Server Information
 - **Domain**: maybax.de
 - **Mail Server**: mail.maybax.de
-- **IP Address**: 144.91.106.134
+- **IP Address**: 5.189.184.167
 - **Registrar**: Spaceship.com
 - **Admin Email**: admin@maybax.de
 
@@ -20,13 +20,13 @@ Login to: https://www.spaceship.com/ → Domains → maybax.de → DNS Settings
 - [ ] **A Record #1**
   - Type: `A`
   - Host: `mail`
-  - Value: `144.91.106.134`
+  - Value: `5.189.184.167`
   - TTL: `3600`
 
 - [ ] **A Record #2** (Optional - for webmail at root domain)
   - Type: `A`
   - Host: `@` or leave blank
-  - Value: `144.91.106.134`
+  - Value: `5.189.184.167`
   - TTL: `3600`
 
 - [ ] **MX Record**
@@ -39,7 +39,7 @@ Login to: https://www.spaceship.com/ → Domains → maybax.de → DNS Settings
 - [ ] **SPF TXT Record**
   - Type: `TXT`
   - Host: `@` or leave blank
-  - Value: `v=spf1 mx ip4:144.91.106.134 ~all`
+  - Value: `v=spf1 mx ip4:5.189.184.167 ~all`
   - TTL: `3600`
 
 - [ ] **DMARC TXT Record**
@@ -52,7 +52,7 @@ Login to: https://www.spaceship.com/ → Domains → maybax.de → DNS Settings
 
 - [ ] **Request PTR (Reverse DNS) Record**
   - Tell them: "Please set up reverse DNS"
-  - IP: `144.91.106.134`
+  - IP: `5.189.184.167`
   - Should point to: `mail.maybax.de`
   - Critical for email deliverability!
 
@@ -62,7 +62,7 @@ Login to: https://www.spaceship.com/ → Domains → maybax.de → DNS Settings
 - [ ] Test A record:
   ```bash
   nslookup mail.maybax.de
-  # Should show: 144.91.106.134
+  # Should show: 5.189.184.167
   ```
 - [ ] Test MX record:
   ```bash
@@ -70,7 +70,7 @@ Login to: https://www.spaceship.com/ → Domains → maybax.de → DNS Settings
   # Should show: mail.maybax.de
   ```
 - [ ] Use online tool: https://dnschecker.org/ (enter `mail.maybax.de`)
-- [ ] All locations should show `144.91.106.134`
+- [ ] All locations should show `5.189.184.167`
 
 ---
 
@@ -80,8 +80,8 @@ Login to: https://www.spaceship.com/ → Domains → maybax.de → DNS Settings
 
 - [ ] Connect to server:
   ```bash
-  ssh root@144.91.106.134
-  # Or: ssh youruser@144.91.106.134
+  ssh root@5.189.184.167
+  # Or: ssh youruser@5.189.184.167
   ```
 
 ### Update Operating System
@@ -148,7 +148,7 @@ If you see failures, fix them:
 - [ ] **Update /etc/hosts**:
   ```bash
   sudo nano /etc/hosts
-  # Add line: 144.91.106.134 mail.maybax.de mail
+  # Add line: 5.189.184.167 mail.maybax.de mail
   ```
 - [ ] **Low memory**: Add swap space
   ```bash
@@ -372,7 +372,7 @@ When prompted, enter:
 
 - [ ] Test reverse DNS:
   ```bash
-  dig -x 144.91.106.134
+  dig -x 5.189.184.167
   # Should return: mail.maybax.de
   ```
 
@@ -453,7 +453,7 @@ Provide users with these settings:
 ### Document Your Setup
 
 - [ ] Record admin password in password manager
-- [ ] Document server IP: `144.91.106.134`
+- [ ] Document server IP: `5.189.184.167`
 - [ ] Note all DNS records configured
 - [ ] Save SSL certificate renewal process
 - [ ] Document backup procedures

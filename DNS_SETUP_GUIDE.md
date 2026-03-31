@@ -3,7 +3,7 @@
 ## 🌐 DNS Setup for Zimbra Mail Server
 
 **Domain**: maybax.de
-**Mail Server IP**: 144.91.106.134
+**Mail Server IP**: 5.189.184.167
 **Registrar**: Spaceship.com
 **Mail Hostname**: mail.maybax.de  
 
@@ -35,14 +35,14 @@
 ```
 Type:     A
 Host:     mail
-Value:    144.91.106.134
+Value:    5.189.184.167
 TTL:      3600 (or 1 hour)
 ```
 
 **In Spaceship.com interface:**
 - Record Type: `A`
 - Name/Host: `mail`
-- Points to/Value: `144.91.106.134`
+- Points to/Value: `5.189.184.167`
 - TTL: `3600` or `Auto`
 
 ### 2. A Record (Root Domain - Optional)
@@ -52,14 +52,14 @@ TTL:      3600 (or 1 hour)
 ```
 Type:     A
 Host:     @  (or leave blank for root)
-Value:    144.91.106.134
+Value:    5.189.184.167
 TTL:      3600
 ```
 
 **In Spaceship.com interface:**
 - Record Type: `A`
 - Name/Host: `@` or leave empty
-- Points to/Value: `144.91.106.134`
+- Points to/Value: `5.189.184.167`
 - TTL: `3600` or `Auto`
 
 ### 3. MX Record (Mail Exchange)
@@ -90,14 +90,14 @@ TTL:      3600
 ```
 Type:     TXT
 Host:     @  (or leave blank for root)
-Value:    v=spf1 mx ip4:144.91.106.134 ~all
+Value:    v=spf1 mx ip4:5.189.184.167 ~all
 TTL:      3600
 ```
 
 **In Spaceship.com interface:**
 - Record Type: `TXT`
 - Name/Host: `@` or leave empty
-- Text Value: `v=spf1 mx ip4:144.91.106.134 ~all`
+- Text Value: `v=spf1 mx ip4:5.189.184.167 ~all`
 - TTL: `3600` or `Auto`
 
 ### 5. DKIM Record (Email Authentication)
@@ -155,7 +155,7 @@ You MUST contact your **server hosting provider** to set this up.
 
 ```
 PTR Record:
-144.91.106.134 → mail.maybax.de
+5.189.184.167 → mail.maybax.de
 ```
 
 Or in reverse DNS format:
@@ -167,11 +167,11 @@ Or in reverse DNS format:
 
 **How to verify after setup:**
 ```bash
-nslookup 144.91.106.134
+nslookup 5.189.184.167
 # Should return: mail.maybax.de
 
 # Or use:
-dig -x 144.91.106.134
+dig -x 5.189.184.167
 ```
 
 ---
@@ -182,10 +182,10 @@ After adding all records, your DNS zone should look like this:
 
 | Type | Name/Host | Value/Points To | Priority | TTL |
 |------|-----------|-----------------|----------|-----|
-| A | mail | 144.91.106.134 | - | 3600 |
-| A | @ | 144.91.106.134 | - | 3600 |
+| A | mail | 5.189.184.167 | - | 3600 |
+| A | @ | 5.189.184.167 | - | 3600 |
 | MX | @ | mail.maybax.de | 10 | 3600 |
-| TXT | @ | v=spf1 mx ip4:144.91.106.134 ~all | - | 3600 |
+| TXT | @ | v=spf1 mx ip4:5.189.184.167 ~all | - | 3600 |
 | TXT | default._domainkey | v=DKIM1; k=rsa; p=YOUR_KEY... | - | 3600 |
 | TXT | _dmarc | v=DMARC1; p=quarantine; rua=mailto:dmarc@maybax.de | - | 3600 |
 
@@ -199,7 +199,7 @@ After adding all records, your DNS zone should look like this:
    ```bash
    # Test A record
    nslookup mail.maybax.de
-   # Should return: 173.249.1.171
+   # Should return: 5.189.184.167
    
    # Test MX record
    nslookup -query=mx maybax.de
@@ -209,7 +209,7 @@ After adding all records, your DNS zone should look like this:
 2. **Verify from multiple locations**
    - Use: https://dnschecker.org/
    - Enter: `mail.maybax.de`
-   - Check that it resolves to `173.249.1.171` globally
+   - Check that it resolves to `5.189.184.167` globally
 
 3. **Check MX record**
    - Use: https://mxtoolbox.com/SuperTool.aspx
@@ -220,14 +220,14 @@ After adding all records, your DNS zone should look like this:
 
 1. **Verify PTR record**
    ```bash
-   dig -x 173.249.1.171
+   dig -x 5.189.184.167
    # Should return: mail.maybax.de
    ```
 
 2. **Test SPF record**
    ```bash
    dig txt maybax.de
-   # Should show: "v=spf1 mx ip4:173.249.1.171 ~all"
+   # Should show: "v=spf1 mx ip4:5.189.184.167 ~all"
    ```
 
 3. **Test DKIM**
@@ -263,7 +263,7 @@ After adding all records, your DNS zone should look like this:
 
 ### Phase 2: Server Preparation
 
-1. ✅ SSH into your server at `173.249.1.171`
+1. ✅ SSH into your server at `5.189.184.167`
 2. ✅ Update Ubuntu: `sudo apt update && sudo apt upgrade -y`
 3. ✅ Reboot if needed: `sudo reboot`
 4. ✅ Clone the repository:
@@ -364,7 +364,7 @@ Try the format that works in their interface.
 
 **Remember**: 
 - PTR records are NOT managed at Spaceship.com
-- Contact your SERVER hosting provider (where 173.249.1.171 is hosted)
+- Contact your SERVER hosting provider (where 5.189.184.167 is hosted)
 - This is absolutely critical for email delivery
 
 ---
@@ -378,7 +378,7 @@ Try the format that works in their interface.
 
 ### For PTR Record
 - Contact your server/VPS hosting provider
-- Provide: IP (173.249.1.171) → Hostname (mail.maybax.de)
+- Provide: IP (5.189.184.167) → Hostname (mail.maybax.de)
 
 ---
 
@@ -386,12 +386,12 @@ Try the format that works in their interface.
 
 Before running `./install-zimbra.sh`, verify:
 
-- [ ] A record for mail.maybax.de points to 173.249.1.171
+- [ ] A record for mail.maybax.de points to 5.189.184.167
 - [ ] MX record for maybax.de points to mail.maybax.de
 - [ ] SPF TXT record is added
 - [ ] DNS propagation complete (test with nslookup)
 - [ ] PTR record requested from hosting provider
-- [ ] Server at 173.249.1.171 is accessible via SSH
+- [ ] Server at 5.189.184.167 is accessible via SSH
 - [ ] Server is running Ubuntu 20.04 or 22.04
 - [ ] You have root/sudo access
 

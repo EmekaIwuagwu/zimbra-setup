@@ -114,13 +114,13 @@ Add these DNS records at your domain registrar:
 
 ```dns
 # A Record
-mail.maybax.de.       IN  A       144.91.106.134
+mail.maybax.de.       IN  A       5.189.184.167
 
 # MX Record
 maybax.de.            IN  MX  10  mail.maybax.de.
 
 # TXT Record for SPF
-maybax.de.            IN  TXT     "v=spf1 mx ip4:144.91.106.134 ~all"
+maybax.de.            IN  TXT     "v=spf1 mx ip4:5.189.184.167 ~all"
 
 # DKIM Record (get from Zimbra after installation)
 default._domainkey.maybax.de. IN TXT "v=DKIM1; k=rsa; p=YOUR_PUBLIC_KEY"

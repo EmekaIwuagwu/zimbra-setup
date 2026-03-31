@@ -14,7 +14,7 @@ NC='\033[0m'
 
 DOMAIN="maybax.de"
 MAIL_HOST="mail.maybax.de"
-SERVER_IP="173.249.1.171"
+SERVER_IP="5.189.184.167"
 
 echo -e "${BLUE}========================================${NC}"
 echo -e "${BLUE}DNS Verification for maybax.de${NC}"
@@ -50,7 +50,7 @@ if [[ -n "$SPF_RESULT" ]]; then
     echo -e "  $SPF_RESULT"
 else
     echo -e "${RED}✗ FAIL${NC} - SPF record not found"
-    echo -e "${YELLOW}  Action: Add TXT record: v=spf1 mx ip4:173.249.1.171 ~all${NC}"
+    echo -e "${YELLOW}  Action: Add TXT record: v=spf1 mx ip4:5.189.184.167 ~all${NC}"
 fi
 echo ""
 
@@ -77,10 +77,10 @@ fi
 echo ""
 
 # Test reverse DNS (PTR)
-echo -e "${BLUE}Testing Reverse DNS (PTR) for 173.249.1.171...${NC}"
-PTR_RESULT=$(nslookup 173.249.1.171 2>/dev/null | grep "name =" | awk '{print $NF}' | sed 's/\.$//')
+echo -e "${BLUE}Testing Reverse DNS (PTR) for 5.189.184.167...${NC}"
+PTR_RESULT=$(nslookup 5.189.184.167 2>/dev/null | grep "name =" | awk '{print $NF}' | sed 's/\.$//')
 if [[ "$PTR_RESULT" == "mail.maybax.de" ]]; then
-    echo -e "${GREEN}✓ PASS${NC} - PTR record: 173.249.1.171 → mail.maybax.de"
+    echo -e "${GREEN}✓ PASS${NC} - PTR record: 5.189.184.167 → mail.maybax.de"
 else
     echo -e "${RED}✗ FAIL${NC} - PTR record points to: $PTR_RESULT"
     echo -e "${YELLOW}  Action: Contact hosting provider to set PTR record${NC}"
@@ -141,7 +141,7 @@ if command -v dig &> /dev/null; then
     echo ""
     
     echo -e "${BLUE}PTR Record:${NC}"
-    dig +short -x 173.249.1.171
+    dig +short -x 5.189.184.167
     echo ""
 fi
 

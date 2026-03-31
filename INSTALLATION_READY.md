@@ -124,4 +124,4 @@ If you encounter any issues:
 **Script Version**: Production v1.0 (2026-02-11)
 **Tested For**: Ubuntu 22.04/24.04 + Zimbra 10.1 PLUS
 **Domain**: maybax.de
-**Server IP**: 144.91.106.134
+**Server IP**: 5.189.184.167
